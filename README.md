@@ -1,7 +1,7 @@
 # :iphone: Projeto App de Mensagens
 
 
-- <p>Esse projeto foi desenvolvido para o trabalho bimestral na faculdade. Nele, criamos um aapp básico de mensagens para a faculdade, com telas interativas. Utilizamos as ferramentas Figma para desenvolver os protótipos e a linguagem Flutter para implementar o app.</p>
+- <p>Esse projeto foi desenvolvido para o trabalho semestral na faculdade. Nele, criamos um app básico de mensagens para a faculdade, com telas interativas. Utilizamos as ferramentas Figma para desenvolver os protótipos e a linguagem Flutter para implementar o app.</p>
 
 <br>
 <p><i>Projeto ministrado pelos Professores Gustavo e Renata</i></p>
