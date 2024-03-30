@@ -1,6 +1,5 @@
 import 'app_controller.dart';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
 import 'login_page.dart';
 import 'register_student.dart';
 import 'register_teacher.dart';
@@ -24,7 +23,6 @@ class AppWidget extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => LoginPage(),
-              '/home': (context) => HomePage(),
               '/chat': (context) => PaginaDeChats(),
               '/RegisterStudent': (context) => RegisterStudent(),
               '/RegisterTeacher': (context) => RegisterTeacher(),
