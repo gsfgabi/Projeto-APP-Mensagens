@@ -39,33 +39,36 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
         child: Column(
           children: [
             Container(
-              width: 200,
-              height: 100,
-              child: Stack(
+              // width: 200,
+              // height: 100,
+              child: Column(
                 // Usamos Stack para sobrepor o texto e o botão
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/logo.png'),
-                      Text(
-                        'Turmas',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF4B9460),
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 100, right: 100),
+                        child: Image.asset('assets/images/logo.png'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Turmas',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Color(0xFF4B9460),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            CustomSwitcher(),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8, top: 80),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CustomSwitcher(),
-                      ],
-                    ),
                   ),
                 ],
               ),
