@@ -21,13 +21,22 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
     listaChats.add(
       Chat(
         nome: '5º Engenharia de Software',
-        mensagens: {'conteudo': 'Olá'},
+        mensagens: {'conteudo': 'Atividade para entregar até amanhã'},
+        imagem: 'assets/images/EWS.png',
       ),
     );
     listaChats.add(
       Chat(
-        nome: '5º Análise e Desenvolvimento de Sistemas',
-        mensagens: {'conteudo': 'Alô'},
+        nome: '4º Análise e Desenvolvimento de Sistemas',
+        mensagens: {'conteudo': 'Atividade está no LXP'},
+        imagem: 'assets/images/ADS.png',
+      ),
+    );
+    listaChats.add(
+      Chat(
+        nome: '3º Direito',
+        mensagens: {'conteudo': 'Entregar relatório de estágio até amanhá'},
+        imagem: 'assets/images/DIREITO.png',
       ),
     );
   }
@@ -81,8 +90,14 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
               itemCount: listaChats.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  contentPadding: const EdgeInsets.all(8),
+                  contentPadding: const EdgeInsets.all(15),
                   title: Text(listaChats[index].nome),
+                  subtitle: Text("Bacharel"),
+                  hoverColor: Color.fromARGB(255, 68, 137, 87),
+                  leading: Image.asset(
+                    listaChats[index].imagem,
+                  ),
+                  onTap: () {},
                 );
               },
             ),
@@ -96,8 +111,9 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
 class Chat {
   final String nome;
   final Map<String, String> mensagens;
+  String imagem;
 
-  Chat({required this.nome, required this.mensagens});
+  Chat({required this.nome, required this.mensagens, required this.imagem});
 }
 
 class CustomSwitcher extends StatelessWidget {
