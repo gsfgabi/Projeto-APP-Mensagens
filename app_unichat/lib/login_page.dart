@@ -78,8 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (valor) {
-                      if (valor == null ||
-                          valor.trim().length < 6) {
+                      if (valor == null || valor.trim().length < 6) {
                         return 'A senha deve ter pelo menos 6 caracteres.';
                       }
                       return null;
@@ -94,9 +93,9 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4B9460)
-                      // Text Color (Foreground color)
-                      ),
+                    backgroundColor: Color(0xFF4B9460),
+                    // Cor de Texto (Cor de primeiro plano)
+                  ),
                   child: const Text(
                     'Entrar',
                     style: TextStyle(color: Colors.white),
@@ -104,16 +103,23 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     if (email.toLowerCase() == 'admin' &&
                         senha.toLowerCase() == 'admin') {
-                      // Aqui você pode redirecionar a pessoa para criar uma conta como professor
-                      // Por exemplo:
-                      Navigator.of(context)
-                          .pushReplacementNamed('/RegisterTeacher');
+                      // Redireciona para a criação de uma conta como professor
+                      Navigator.of(context).pushNamed('/RegisterTeacher');
                     } else {
-                      // Aqui você pode lidar com outras condições de login
-                      if (email == email && senha == senha) {
-                        Navigator.of(context).pushReplacementNamed('/chat');
+                      // Verifica se o email e a senha correspondem a algum critério
+                      if (email.isNotEmpty && senha.isNotEmpty) {
+                        // Verifica se o email é válido
+                        if (email.contains('@')) {
+                          // Se todas as condições forem atendidas, redireciona para a tela de chat
+                          Navigator.of(context).pushReplacementNamed('/chat');
+                        } else {
+                          // Exibe uma mensagem de erro se o email for inválido
+                          print(
+                              'Por favor, insira um endereço de email válido!');
+                        }
                       } else {
-                        print('Login Inválido');
+                        // Exibe uma mensagem de erro se o email ou senha estiverem vazios
+                        print('Por favor, insira seu email e senha!');
                       }
                     }
                   },
