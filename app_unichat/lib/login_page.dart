@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
         body: SingleChildScrollView(
       child: Column(
         children: [
-          Container(
+          SizedBox(
             width: 300,
             height: 100,
             child: Image.asset('assets/images/logo.png'),
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.emailAddress,
                         autocorrect: false,
                         textCapitalization: TextCapitalization.none,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(),
                         ),
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                           senha = text;
                         },
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Senha',
                           border: OutlineInputBorder(),
                         ),
@@ -96,10 +96,10 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF4B9460),
+                        backgroundColor: const Color(0xFF4B9460),
                         // Cor de Texto (Cor de primeiro plano)
                       ),
                       child: const Text(
@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             // Navegar para a página "Esqueci a Senha" aqui
                             Navigator.pushNamed(context, '/esqueciSenha');
                           },
-                          child: Text(
+                          child: const Text(
                             'Esqueci a Senha',
                             style: TextStyle(
                                 decoration: TextDecoration.none,
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                             // Navegar para a página "Primeiro Acesso" aqui
                             Navigator.pushNamed(context, '/RegisterStudent');
                           },
-                          child: Text(
+                          child: const Text(
                             'Primeiro Acesso',
                             style: TextStyle(
                                 decoration: TextDecoration.none,

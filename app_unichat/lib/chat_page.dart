@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_controller.dart';
 
 class PaginaDeChats extends StatefulWidget {
-  const PaginaDeChats({Key? key}) : super(key: key);
+  const PaginaDeChats({super.key});
 
   @override
   State<PaginaDeChats> createState() => _PaginaDeChatsState();
@@ -47,53 +47,49 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              // width: 200,
-              // height: 100,
-              child: Column(
-                // Usamos Stack para sobrepor o texto e o botão
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 100, right: 100),
-                        child: Image.asset('assets/images/logo.png'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Turmas',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFF4B9460),
-                                fontWeight: FontWeight.bold,
-                              ),
+            Column(
+              // Usamos Stack para sobrepor o texto e o botão
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 100, right: 100),
+                      child: Image.asset('assets/images/logo.png'),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Turmas',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF4B9460),
+                              fontWeight: FontWeight.bold,
                             ),
-                            CustomSwitcher(),
-                          ],
-                        ),
+                          ),
+                          CustomSwitcher(),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             ListView.builder(
               key: GlobalKey(),
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: listaChats.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   contentPadding: const EdgeInsets.all(15),
                   title: Text(listaChats[index].nome),
-                  subtitle: Text("Bacharel"),
-                  hoverColor: Color.fromARGB(255, 68, 137, 87),
+                  subtitle: const Text("Bacharel"),
+                  hoverColor: const Color.fromARGB(255, 68, 137, 87),
                   leading: Image.asset(
                     listaChats[index].imagem,
                   ),
@@ -117,7 +113,7 @@ class Chat {
 }
 
 class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({Key? key}) : super(key: key);
+  const CustomSwitcher({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +122,7 @@ class CustomSwitcher extends StatelessWidget {
       onChanged: (value) {
         AppController.instance.changeTheme();
       },
-      activeColor: Color(0xFF4B9460), // Definindo a cor do botão para verde
+      activeColor: const Color(0xFF4B9460), // Definindo a cor do botão para verde
     );
   }
 }

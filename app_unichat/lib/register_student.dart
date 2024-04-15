@@ -21,7 +21,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
         body: SingleChildScrollView(
       child: Column(
         children: [
-          Container(
+          SizedBox(
             width: 300,
             height: 100,
             child: Image.asset('assets/images/logo.png'),
@@ -32,7 +32,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Cadastro do Aluno',
                   style: TextStyle(
                     fontSize: 30.0,
@@ -47,13 +47,13 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     onChanged: (text) {
                       nomecompleto = text;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Nome Completo',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -61,13 +61,13 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       email = text;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -75,13 +75,13 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       senha = text;
                     },
                     obscureText: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Senha',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -89,13 +89,13 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       selecionarcurso = text;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Selecionar Curso',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -103,16 +103,16 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       codigoturma = text;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Codigo da Turma',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4B9460)
+                      backgroundColor: const Color(0xFF4B9460)
                       // Text Color (Foreground color)
                       ),
                   child: const Text(

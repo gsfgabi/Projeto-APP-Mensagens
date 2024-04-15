@@ -21,7 +21,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
         body: SingleChildScrollView(
       child: Column(
         children: [
-          Container(
+          SizedBox(
             width: 300,
             height: 100,
             child: Image.asset('assets/images/logo.png'),
@@ -32,7 +32,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Cadastro de Professor',
                   style: TextStyle(
                     fontSize: 30.0,
@@ -47,13 +47,13 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                     onChanged: (text) {
                       nomecompleto = text;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Nome Completo',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -61,13 +61,13 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                       email = text;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: TextField(
@@ -75,16 +75,16 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                       senha = text;
                     },
                     obscureText: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Senha',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4B9460)
+                      backgroundColor: const Color(0xFF4B9460)
                       // Text Color (Foreground color)
                       ),
                   child: const Text(
