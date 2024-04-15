@@ -22,10 +22,10 @@ class AppWidget extends StatelessWidget {
                     : Brightness.light),
             initialRoute: '/',
             routes: {
-              '/': (context) => LoginPage(),
-              '/chat': (context) => PaginaDeChats(),
-              '/RegisterStudent': (context) => RegisterStudent(),
-              '/RegisterTeacher': (context) => RegisterTeacher(),
+              '/': (context) => const LoginPage(),
+              '/chat': (context) => const PaginaDeChats(),
+              '/RegisterStudent': (context) => const RegisterStudent(),
+              '/RegisterTeacher': (context) => const RegisterTeacher(),
             },
           );
         });
