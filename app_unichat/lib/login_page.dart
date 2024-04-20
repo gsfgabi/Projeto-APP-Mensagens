@@ -8,8 +8,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String email = '';
-  String senha = '';
+  String _email = '';
+  String _senha = '';
   final _chaveForm = GlobalKey<FormState>();
 
   @override
@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         onChanged: (text) {
-                          email = text;
+                          _email = text;
                         },
                         keyboardType: TextInputType.emailAddress,
                         autocorrect: false,
@@ -59,14 +59,14 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (valor) {
                           if (valor == null ||
                               valor.trim().isEmpty ||
-                              !valor.contains('@')) {
+                              !valor.contains('@unicv.edu.br')) {
                             return 'Por favor, insira um endereço de email válido!';
                           }
                           return null;
                         },
                         onSaved: (valorDigitado) {
                           if (valorDigitado != null) {
-                            email = valorDigitado;
+                            _email = valorDigitado;
                           }
                         },
                       ),
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         onChanged: (text) {
-                          senha = text;
+                          _senha = text;
                         },
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -91,46 +91,57 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         onSaved: (valor) {
                           if (valor != null) {
-                            senha = valor;
+                            _senha = valor;
                           }
                         },
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4B9460),
-                        // Cor de Texto (Cor de primeiro plano)
-                      ),
-                      child: const Text(
-                        'Entrar',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (email.toLowerCase() == 'admin' &&
-                            senha.toLowerCase() == 'admin') {
-                          // Redireciona para a criação de uma conta como professor
-                          Navigator.of(context).pushNamed('/RegisterTeacher');
-                        } else {
-                          // Verifica se o email e a senha correspondem a algum critério
-                          if (email.isNotEmpty && senha.isNotEmpty) {
-                            // Verifica se o email é válido
-                            if (email.contains('@')) {
-                              // Se todas as condições forem atendidas, redireciona para a tela de chat
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/chat');
-                            } else {
-                              // Exibe uma mensagem de erro se o email for inválido
-                              print(
-                                  'Por favor, insira um endereço de email válido!');
-                            }
-                          } else {
-                            // Exibe uma mensagem de erro se o email ou senha estiverem vazios
-                            print('Por favor, insira seu email e senha!');
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4B9460),
+                          // Cor de Texto (Cor de primeiro plano)
+                        ),
+                        child: const Text(
+                          'Entrar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          if (!_chaveForm.currentState!.validate()) {
+                            return;
                           }
-                        }
-                      },
-                    ),
+                          _chaveForm.currentState!.save();
+
+                          // Imprimir no console o nome de usuário e senha
+                          print('Nome de Usuário: $_email');
+                          print('Senha: $_senha');
+
+                          if (_email.toLowerCase() == 'admin' &&
+                              _senha.toLowerCase() == 'admin') {
+                            // Redireciona para a criação de uma conta como professor
+                            Navigator.of(context).pushNamed('/RegisterTeacher');
+                          } else {
+                            // Verifica se o email e a senha foram fornecidos
+                            if (_email.isNotEmpty && _senha.isNotEmpty) {
+                              // Verifica se o email é válido
+                              if (_email.contains('@unicv.edu.br')) {
+                                // Se todas as condições forem atendidas, redireciona para a tela de chat
+                                Navigator.of(context)
+                                    .pushReplacementNamed('/chat');
+                              } else {
+                                // Exibe uma mensagem de erro se o email for inválido
+                                print(
+                                    'Por favor, insira um endereço de email válido!');
+                              }
+                            } else {
+                              // Exibe uma mensagem de erro se o email ou senha estiverem vazios
+                              print('Por favor, insira seu email e senha!');
+                            }
+                          }
+                        },
+                      ),
+                    ]),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
