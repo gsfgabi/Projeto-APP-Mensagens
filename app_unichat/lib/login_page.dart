@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                           _chaveForm.currentState!.save();
 
                           // Imprimir no console o nome de usuário e senha
-                          print('Nome de Usuário: $_email');
+                          print('Email do Usuário: $_email');
                           print('Senha: $_senha');
 
                           if (_email.toLowerCase() == 'admin' &&
