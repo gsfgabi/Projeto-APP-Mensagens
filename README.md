@@ -11,9 +11,9 @@
 
 - <a href ="https://github.com/GiihCardoso"> 👩‍💻 Geovanna Cardoso</a>
 
-- <a href ="https://github.com/Wendel-Vinicius"> 👨‍💻 Wendel Vinicius</a>
+- <a href ="https://github.com/Kethellin"> 👩‍💻 Kethellin Pereira</a>    
 
-- <a href ="https://github.com/Kethellin"> 👩‍💻 Kethellin Pereira</a>                         
+- <a href ="https://github.com/Wendel-Vinicius"> 👨‍💻 Wendel Vinicius</a>
 
 <br>
 <div>
