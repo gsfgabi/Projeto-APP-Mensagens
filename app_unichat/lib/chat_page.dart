@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'app_controller.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class PaginaDeChats extends StatefulWidget {
   const PaginaDeChats({super.key});
@@ -62,7 +65,7 @@ class _PaginaDeChatsState extends State<PaginaDeChats> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Turmas',
                             style: TextStyle(
                               fontSize: 20,
@@ -113,7 +116,7 @@ class Chat {
 }
 
 class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({super.key});
+  const CustomSwitcher({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -126,3 +129,4 @@ class CustomSwitcher extends StatelessWidget {
     );
   }
 }
+
