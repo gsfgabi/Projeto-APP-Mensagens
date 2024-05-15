@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -107,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                           'Entrar',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (!_chaveForm.currentState!.validate()) {
                             return;
                           }
@@ -117,27 +121,44 @@ class _LoginPageState extends State<LoginPage> {
                           print('Email do Usuário: $_email');
                           print('Senha: $_senha');
 
-                          if (_email.toLowerCase() == 'admin' &&
+                          try {
+                            if (_email.toLowerCase() == 'admin' &&
                               _senha.toLowerCase() == 'admin') {
-                            // Redireciona para a criação de uma conta como professor
-                            Navigator.of(context).pushNamed('/RegisterTeacher');
-                          } else {
-                            // Verifica se o email e a senha foram fornecidos
-                            if (_email.isNotEmpty && _senha.isNotEmpty) {
-                              // Verifica se o email é válido
-                              if (_email.contains('@unicv.edu.br')) {
-                                // Se todas as condições forem atendidas, redireciona para a tela de chat
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/chat');
-                              } else {
-                                // Exibe uma mensagem de erro se o email for inválido
-                                print(
-                                    'Por favor, insira um endereço de email válido!');
-                              }
+                              // Redireciona para a criação de uma conta como professor
+                              Navigator.of(context).pushNamed('/RegisterTeacher');
                             } else {
+                              // Verifica se o email e a senha foram fornecidos
+                              if (_email.isNotEmpty && _senha.isNotEmpty) {
+                                // Verifica se o email é válido
+                                if (_email.contains('@unicv.edu.br')) {
+                                  // Se todas as condições forem atendidas, redireciona para a tela de chat
+                                  await _firebaseAuth
+                                  .signInWithEmailAndPassword(
+                                      email: _email,
+                                      password: _senha);
+                                  Navigator.of(context)
+                                    .pushReplacementNamed('/chat');
+                                }
+                              }else {
                               // Exibe uma mensagem de erro se o email ou senha estiverem vazios
                               print('Por favor, insira seu email e senha!');
+                              }
                             }
+                          } on FirebaseAuthException catch (error) {
+                            String mensagem =
+                                'Falha no Registro de novo Usuário';
+                            if (error.code ==
+                                'email-already-in-use') {
+                              mensagem = 'Email já utilizado';
+                            }
+                            ScaffoldMessenger.of(context)
+                                .clearSnackBars();
+                            ScaffoldMessenger.of(context)
+                              .showSnackBar(
+                              SnackBar(
+                                content: Text(mensagem),
+                              ),
+                            );
                           }
                         },
                       ),
