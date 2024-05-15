@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'widgets/mensagens_chat.dart';
 
 class PaginaDeChat extends StatefulWidget {
