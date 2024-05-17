@@ -23,11 +23,11 @@ class AppWidget extends StatelessWidget {
                 : Brightness.light),
         initialRoute: '/',
         routes: {
-          '/': (context) => const LoginPage(),
+          // '/login': (context) => const LoginPage(),
           '/turma': (context) => const PaginaDeTurmas(),
           '/RegisterStudent': (context) => const RegisterStudent(),
           '/RegisterTeacher': (context) => const RegisterTeacher(),
-          // '/chat': (context) => const RegisterTeacher(),
+          '/esqueciSenha': (context) => const LoginPage(),
         },
         home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
