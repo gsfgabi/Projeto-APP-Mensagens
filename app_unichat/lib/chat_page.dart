@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'widgets/mensagens_chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class PaginaDeChat extends StatefulWidget {
   const PaginaDeChat({super.key});
@@ -21,10 +24,8 @@ class _PaginaDeChatState extends State<PaginaDeChat> {
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.exit_to_app,
-            ),
+            onPressed: () => _firebaseAuth.signOut(),
+            icon: const Icon(Icons.exit_to_app),
           )
         ],
       ),
