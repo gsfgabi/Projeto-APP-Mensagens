@@ -57,12 +57,12 @@ class _ClassPageState extends State<ClassPage> {
               const CustomSwitcher(),
               IconButton(
                 onPressed: () async {
-              await _firebaseAuth.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
+                  await _firebaseAuth.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
                 icon: const Icon(Icons.exit_to_app),
               ),
             ],

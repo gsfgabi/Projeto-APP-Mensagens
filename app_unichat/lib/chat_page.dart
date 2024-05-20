@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'widgets/mensagens_chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_page.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class ChatPage extends StatefulWidget {
   final String chatId;
@@ -22,10 +26,14 @@ class _ChatPageState extends State<ChatPage> {
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.exit_to_app,
-            ),
+            onPressed: () async {
+              await _firebaseAuth.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+            icon: const Icon(Icons.exit_to_app),
           )
         ],
       ),
