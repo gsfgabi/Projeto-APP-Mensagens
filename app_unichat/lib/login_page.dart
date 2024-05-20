@@ -122,10 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                                       print('Senha: $_senha');
                                       
                                       try {
-                                        if (_email.toLowerCase() == 'admin' &&
-                                          _senha.toLowerCase() == 'admin') {
+                                        if (_email.toLowerCase() == 'admin@unicv.edu.br' &&
+                                          _senha.toLowerCase() == 'adm123') {
                                           // Redireciona para a criação de uma conta como professor
-                                          Navigator.of(context).pushNamed('/RegisterTeacher');
+                                          Navigator.of(context).pushReplacementNamed('/RegisterCoodinator');
                                         } else {
                                           // Verifica se o email e a senha foram fornecidos
                                           if (_email.isNotEmpty && _senha.isNotEmpty) {
