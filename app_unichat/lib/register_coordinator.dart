@@ -5,19 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
-class RegisterStudent extends StatefulWidget {
-  const RegisterStudent({super.key});
+class RegisterCoodinator extends StatefulWidget {
+  const RegisterCoodinator({super.key});
 
   @override
-  State<RegisterStudent> createState() => _RegisterStudentState();
+  State<RegisterCoodinator> createState() => _RegisterCoodinatorState();
 }
 
-class _RegisterStudentState extends State<RegisterStudent> {
+class _RegisterCoodinatorState extends State<RegisterCoodinator> {
   String nomecompleto = '';
   String email = '';
   String senha = '';
-  String selecionarcurso = '';
-  String codigoturma = '';
   final _chaveForm = GlobalKey<FormState>();
 
   @override
@@ -31,7 +29,6 @@ class _RegisterStudentState extends State<RegisterStudent> {
             height: 100,
             child: Image.asset('assets/images/logo.png'),
           ),
-          
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -41,7 +38,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Cadastro do Aluno',
+                    'Cadastro do Coordenador',
                     style: TextStyle(
                       fontSize: 30.0,
                     ),
@@ -125,34 +122,6 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      onChanged: (text) {
-                        selecionarcurso = text;
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Selecionar Curso',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      onChanged: (text) {
-                        codigoturma = text;
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Codigo da Turma',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -171,10 +140,10 @@ class _RegisterStudentState extends State<RegisterStudent> {
 
                       if (email == email && senha == senha) {
                         try {
-                          if (email.toLowerCase() == 'admin' &&
-                            senha.toLowerCase() == 'admin') {
-                            // Redireciona para a criação de uma conta como professor
-                            Navigator.of(context).pushNamed('/RegisterTeacher');
+                          if (email.toLowerCase() == 'admin@unicv.edu.br' &&
+                            senha.toLowerCase() == 'adm123') {
+                            // Redireciona para a criação de uma conta como coodenador
+                            Navigator.of(context).pushNamed('/RegisterCoodinator');
                           } else {
                             // Verifica se o email e a senha foram fornecidos
                             if (email.isNotEmpty && senha.isNotEmpty) {
@@ -189,7 +158,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
 
                                                     await FirebaseFirestore.instance.collection('usuarios').doc(credenciaisUsuario.user!.uid).set({
                                                       'email' : email,
-                                                      'isAdmin': false,
+                                                      'isAdmin': true,
                                                       'usuario': nomecompleto,
                                                     });
                                 Navigator.of(context)
@@ -216,31 +185,19 @@ class _RegisterStudentState extends State<RegisterStudent> {
                             ),
                           );
                         }
-                        // Navigator.of(context).pushReplacementNamed('/RegisterStudent');
+                        // Navigator.of(context).pushReplacementNamed('/RegisterCoodinator');
                       
                       } else {
                         print('Login Invalido');
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    TextButton(
-                      onPressed: () {
-                        // Retornar à tela de login
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(
-                        'Já possui uma conta? Faça login',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ],
-                ),
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    ));
   }
 }
