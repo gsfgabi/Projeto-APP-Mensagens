@@ -85,13 +85,13 @@ class _ClassPageState extends State<ClassPage> {
                       return ListTile(
                         leading: _buildIconForType(chat['tipo']),
                         contentPadding: const EdgeInsets.all(8),
-                        title: Text(chat.id),
+                        title: Text(chatsCarregados[index].id),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ChatPage(chatId: chat.id),
+                                  ChatPage(chatId: chatsCarregados[index].id),
                             ),
                           );
                         },
