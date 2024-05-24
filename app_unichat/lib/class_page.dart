@@ -30,11 +30,11 @@ class _ClassPageState extends State<ClassPage> {
           );
         }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(
-            child: Text('Nenhuma sala encontrada!'),
-          );
-        }
+        // if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        //   return const Center(
+        //     child: Text('Nenhuma sala encontrada!'),
+        //   );
+        // }
 
         if (snapshot.hasError) {
           return const Center(
@@ -45,7 +45,7 @@ class _ClassPageState extends State<ClassPage> {
         final chatsCarregados = snapshot.data!.docs;
 
         return Scaffold(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
             backgroundColor: const Color(0xFF4B9460),
             title: const Text(
@@ -60,7 +60,7 @@ class _ClassPageState extends State<ClassPage> {
                   await _firebaseAuth.signOut();
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
                 },
                 icon: const Icon(Icons.exit_to_app),
@@ -102,6 +102,54 @@ class _ClassPageState extends State<ClassPage> {
               ],
             ),
           ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: const Color(0xFF4B9460),
+            foregroundColor: Colors.white,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Adicionar turmas'),
+                    content: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: null,
+                          decoration:  InputDecoration(labelText: 'Curso'),
+                        ),
+                        TextField(
+                          controller: null,
+                          decoration:  InputDecoration(labelText: 'Semestre'),
+                        ),
+                        TextField(
+                          controller: null,
+                          decoration:  InputDecoration(labelText: 'Código'),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Cancelar',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Adicionar',
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
         );
       },
     );
@@ -110,17 +158,17 @@ class _ClassPageState extends State<ClassPage> {
   Widget _buildIconForType(String tipo) {
     switch (tipo) {
       case 'math':
-        return Icon(Icons.calculate);
+        return const Icon(Icons.calculate);
       case 'science':
-        return Icon(Icons.science);
+        return const Icon(Icons.science);
       case 'history':
-        return Icon(Icons.history_edu);
+        return const Icon(Icons.history_edu);
       case 'language':
-        return Icon(Icons.language);
+        return const Icon(Icons.language);
       case 'technology':
-        return Icon(Icons.computer);
+        return const Icon(Icons.computer);
       default:
-        return Icon(Icons.class_);
+        return const Icon(Icons.class_);
     }
   }
 }

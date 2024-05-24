@@ -30,7 +30,7 @@ class _ChatPageState extends State<ChatPage> {
               await _firebaseAuth.signOut();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
+                MaterialPageRoute(builder: (context) => const LoginPage()),
               );
             },
             icon: const Icon(Icons.exit_to_app),

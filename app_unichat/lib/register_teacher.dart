@@ -102,6 +102,17 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                     }
                   },
                 ),
+                const SizedBox(height: 15),
+                TextButton(
+                  onPressed: () {
+                    // Retornar à tela de login
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  },
+                  child: const Text(
+                    'Já possui uma conta? Faça login',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
               ],
             ),
           ),
