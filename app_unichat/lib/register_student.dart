@@ -227,7 +227,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     TextButton(
                       onPressed: () {
                         // Retornar à tela de login
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacementNamed('/login');
                       },
                       child: const Text(
                         'Já possui uma conta? Faça login',

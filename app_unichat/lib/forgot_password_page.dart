@@ -6,7 +6,7 @@ class ForgotPasswordPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF4B9460),
-        title: Text(
+        title: const Text(
           'Esqueci a Senha',
           style: TextStyle(color: Colors.white),
         ),
@@ -15,26 +15,26 @@ class ForgotPasswordPage extends StatelessWidget {
       body: Center(
         child: Card(
           elevation: 4,
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.warning,
+                const Icon(Icons.warning,
                     size: 50, color: Colors.red), // Ícone de alerta
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Entre em Contato com o Suporte',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20),
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Para redefinir sua senha, entre em contato com nosso suporte em support@example.com.',
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -42,9 +42,9 @@ class ForgotPasswordPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // Cor do botão
                   ),
-                  child: Text(
+                  child: const Text(
                     'OK',
-                    style: TextStyle(color: const Color(0xFF4B9460)),
+                    style: TextStyle(color:  Color(0xFF4B9460)),
                   ),
                 ),
               ],

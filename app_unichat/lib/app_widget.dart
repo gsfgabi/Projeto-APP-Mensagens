@@ -25,13 +25,13 @@ class AppWidget extends StatelessWidget {
             ),
             initialRoute: '/',
             routes: {
-              // '/login': (context) => const LoginPage(),
+              '/login': (context) => const LoginPage(),
               '/turma': (context) => const ClassPage(),
               '/RegisterStudent': (context) => const RegisterStudent(),
               '/RegisterTeacher': (context) => const RegisterTeacher(),
               '/RegisterCoodinator': (context) => const RegisterCoodinator(),
               '/esqueciSenha': (context) => ForgotPasswordPage(),
-              '/conversa': (context) => ChatPage(chatId: "",),
+              '/conversa': (context) => const ChatPage(chatId: "",),
             },
             home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
