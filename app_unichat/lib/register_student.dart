@@ -31,6 +31,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
             height: 100,
             child: Image.asset('assets/images/logo.png'),
           ),
+          
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -219,15 +220,27 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       
                       } else {
                         print('Login Invalido');
-                      }
-                    },
-                  ),
-                ],
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    TextButton(
+                      onPressed: () {
+                        // Retornar à tela de login
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Já possui uma conta? Faça login',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
