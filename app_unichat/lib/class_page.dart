@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app_controller.dart';
 import 'chat_page.dart';
 import 'login_page.dart';
@@ -8,13 +9,18 @@ import 'login_page.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({super.key});
+  const ClassPage({Key? key}) : super(key: key);
 
   @override
   State<ClassPage> createState() => _ClassPageState();
 }
 
 class _ClassPageState extends State<ClassPage> {
+  final TextEditingController nomeController = TextEditingController();
+  final TextEditingController semestreController = TextEditingController();
+  final TextEditingController codigoController = TextEditingController();
+  String? _selectedArea;
+
   @override
   Widget build(BuildContext context) {
     final usuarioAutenticado = FirebaseAuth.instance.currentUser;
@@ -29,12 +35,6 @@ class _ClassPageState extends State<ClassPage> {
             child: CircularProgressIndicator(),
           );
         }
-
-        // if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-        //   return const Center(
-        //     child: Text('Nenhuma sala encontrada!'),
-        //   );
-        // }
 
         if (snapshot.hasError) {
           return const Center(
@@ -102,54 +102,123 @@ class _ClassPageState extends State<ClassPage> {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: const Color(0xFF4B9460),
-            foregroundColor: Colors.white,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Adicionar turmas'),
-                    content: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: null,
-                          decoration:  InputDecoration(labelText: 'Curso'),
-                        ),
-                        TextField(
-                          controller: null,
-                          decoration:  InputDecoration(labelText: 'Semestre'),
-                        ),
-                        TextField(
-                          controller: null,
-                          decoration:  InputDecoration(labelText: 'Código'),
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancelar',
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Adicionar',
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: const Icon(Icons.add),
-          ),
+          floatingActionButton: usuarioAutenticado.email == 'admin@unicv.edu.br'
+              ? FloatingActionButton(
+                  backgroundColor: const Color(0xFF4B9460),
+                  foregroundColor: Colors.white,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Cadastrar Curso'),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextField(
+                                  controller: nomeController,
+                                  decoration:
+                                      InputDecoration(labelText: 'Nome do curso'),
+                                ),
+                                TextField(
+                                  controller: semestreController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  decoration: InputDecoration(labelText: 'Semestre'),
+                                ),
+                                TextField(
+                                  controller: codigoController,
+                                  decoration:
+                                      InputDecoration(labelText: 'Código da turma'),
+                                ),
+                                DropdownButtonFormField<String>(
+                                  value: _selectedArea,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedArea = value;
+                                    });
+                                  },
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: 'MATEMÁTICA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.calculate),
+                                          SizedBox(width: 10),
+                                          Text('MATEMÁTICA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'CIÊNCIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.science),
+                                          SizedBox(width: 10),
+                                          Text('CIÊNCIA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'HISTÓRIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.history_edu),
+                                          SizedBox(width: 10),
+                                          Text('HISTÓRIA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'LINGUAGENS',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.language),
+                                          SizedBox(width: 10),
+                                          Text('LINGUAGENS'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'TECNOLOGIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.computer),
+                                          SizedBox(width: 10),
+                                          Text('TECNOLOGIA'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  decoration: InputDecoration(labelText: 'Área de Conhecimento'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _salvarCurso(context);
+                              },
+                              child: const Text('Adicionar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                )
+              : const SizedBox(),
         );
       },
     );
@@ -171,10 +240,72 @@ class _ClassPageState extends State<ClassPage> {
         return const Icon(Icons.class_);
     }
   }
+
+void _salvarCurso(BuildContext context) async {
+  if (nomeController.text.trim().isEmpty ||
+      semestreController.text.trim().isEmpty ||
+      codigoController.text.trim().isEmpty ||
+      _selectedArea == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Preencha todos os campos antes de salvar'),
+      ),
+    );
+    return;
+  }
+
+  // Normalizar os campos para maiúsculas
+  final nome = nomeController.text.trim().toUpperCase();
+  final codigo = codigoController.text.trim().toUpperCase();
+
+  // Verificar se o código do curso já existe
+  final cursosSnapshot = await FirebaseFirestore.instance
+      .collection('cursos')
+      .where('codigo', isEqualTo: codigo)
+      .get();
+
+  if (cursosSnapshot.docs.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Já existe um curso com o código informado'),
+      ),
+    );
+    return;
+  }
+
+  try {
+    await FirebaseFirestore.instance.collection('cursos').add({
+      'nome': nome,
+      'semestre': semestreController.text,
+      'codigo': codigo,
+      'area': _selectedArea,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Curso cadastrado com sucesso!'),
+      ),
+    );
+    // Limpar os controladores após o cadastro
+    nomeController.clear();
+    semestreController.clear();
+    codigoController.clear();
+    setState(() {
+      _selectedArea = null;
+    });
+    Navigator.of(context).pop(); // Fechar o modal após o cadastro
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Erro ao cadastrar o curso. Tente novamente.'),
+        ),
+      );
+    }
+  }
 }
 
 class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({super.key});
+  const CustomSwitcher({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
