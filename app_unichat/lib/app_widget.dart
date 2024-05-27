@@ -30,7 +30,7 @@ class AppWidget extends StatelessWidget {
               '/RegisterStudent': (context) => const RegisterStudent(),
               '/RegisterTeacher': (context) => const RegisterTeacher(),
               '/RegisterCoodinator': (context) => const RegisterCoodinator(),
-              '/esqueciSenha': (context) => ForgotPasswordPage(),
+              '/esqueciSenha': (context) => const ForgotPasswordPage(),
               '/conversa': (context) => const ChatPage(chatId: "",),
             },
             home: StreamBuilder(

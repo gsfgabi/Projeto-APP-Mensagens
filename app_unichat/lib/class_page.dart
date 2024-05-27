@@ -9,7 +9,7 @@ import 'login_page.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({Key? key}) : super(key: key);
+  const ClassPage({super.key});
 
   @override
   State<ClassPage> createState() => _ClassPageState();
@@ -83,7 +83,7 @@ class _ClassPageState extends State<ClassPage> {
                     itemBuilder: (context, index) {
                       final chat = chatsCarregados[index];
                       return ListTile(
-                        leading: _buildIconForType(chat['tipo']),
+                        leading: _buildIconForType(chat['area']),
                         contentPadding: const EdgeInsets.all(8),
                         title: Text(chatsCarregados[index].id),
                         onTap: () {
@@ -119,7 +119,7 @@ class _ClassPageState extends State<ClassPage> {
                                 TextField(
                                   controller: nomeController,
                                   decoration:
-                                      InputDecoration(labelText: 'Nome do curso'),
+                                      const InputDecoration(labelText: 'Nome do curso'),
                                 ),
                                 TextField(
                                   controller: semestreController,
@@ -127,12 +127,12 @@ class _ClassPageState extends State<ClassPage> {
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
-                                  decoration: InputDecoration(labelText: 'Semestre'),
+                                  decoration: const InputDecoration(labelText: 'Semestre'),
                                 ),
                                 TextField(
                                   controller: codigoController,
                                   decoration:
-                                      InputDecoration(labelText: 'Código da turma'),
+                                      const InputDecoration(labelText: 'Código da turma'),
                                 ),
                                 DropdownButtonFormField<String>(
                                   value: _selectedArea,
@@ -141,7 +141,7 @@ class _ClassPageState extends State<ClassPage> {
                                       _selectedArea = value;
                                     });
                                   },
-                                  items: [
+                                  items: const [
                                     DropdownMenuItem(
                                       value: 'MATEMÁTICA',
                                       child: Row(
@@ -193,7 +193,7 @@ class _ClassPageState extends State<ClassPage> {
                                       ),
                                     ),
                                   ],
-                                  decoration: InputDecoration(labelText: 'Área de Conhecimento'),
+                                  decoration: const InputDecoration(labelText: 'Área de Conhecimento'),
                                 ),
                               ],
                             ),
@@ -224,8 +224,8 @@ class _ClassPageState extends State<ClassPage> {
     );
   }
 
-  Widget _buildIconForType(String tipo) {
-    switch (tipo) {
+  Widget _buildIconForType(String area) {
+    switch (area) {
       case 'math':
         return const Icon(Icons.calculate);
       case 'science':
@@ -242,12 +242,13 @@ class _ClassPageState extends State<ClassPage> {
   }
 
 void _salvarCurso(BuildContext context) async {
+
   if (nomeController.text.trim().isEmpty ||
       semestreController.text.trim().isEmpty ||
       codigoController.text.trim().isEmpty ||
       _selectedArea == null) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Preencha todos os campos antes de salvar'),
       ),
     );
@@ -260,13 +261,13 @@ void _salvarCurso(BuildContext context) async {
 
   // Verificar se o código do curso já existe
   final cursosSnapshot = await FirebaseFirestore.instance
-      .collection('cursos')
+      .collection('salas-participantes')
       .where('codigo', isEqualTo: codigo)
       .get();
 
   if (cursosSnapshot.docs.isNotEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Já existe um curso com o código informado'),
       ),
     );
@@ -274,7 +275,7 @@ void _salvarCurso(BuildContext context) async {
   }
 
   try {
-    await FirebaseFirestore.instance.collection('cursos').add({
+    await FirebaseFirestore.instance.collection('salas-participantes').add({
       'nome': nome,
       'semestre': semestreController.text,
       'codigo': codigo,
@@ -282,7 +283,7 @@ void _salvarCurso(BuildContext context) async {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Curso cadastrado com sucesso!'),
       ),
     );
@@ -296,7 +297,7 @@ void _salvarCurso(BuildContext context) async {
     Navigator.of(context).pop(); // Fechar o modal após o cadastro
   } catch (error) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Erro ao cadastrar o curso. Tente novamente.'),
         ),
       );
@@ -305,7 +306,7 @@ void _salvarCurso(BuildContext context) async {
 }
 
 class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({Key? key}) : super(key: key);
+  const CustomSwitcher({super.key});
 
   @override
   Widget build(BuildContext context) {

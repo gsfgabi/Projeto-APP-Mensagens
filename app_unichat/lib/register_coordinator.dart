@@ -140,34 +140,30 @@ class _RegisterCoodinatorState extends State<RegisterCoodinator> {
 
                       if (email == email && senha == senha) {
                         try {
-                          if (email.toLowerCase() == 'admin@unicv.edu.br' &&
-                            senha.toLowerCase() == 'adm123') {
-                            // Redireciona para a criação de uma conta como coodenador
-                            Navigator.of(context).pushNamed('/RegisterCoodinator');
-                          } else {
-                            // Verifica se o email e a senha foram fornecidos
-                            if (email.isNotEmpty && senha.isNotEmpty) {
-                              // Verifica se o email é válido
-                              if (email.contains('@unicv.edu.br')) {
-                                // Se todas as condições forem atendidas, redireciona para a tela de chat
-                                final credenciaisUsuario =
-                                              await _firebaseAuth
-                                                  .createUserWithEmailAndPassword(
-                                                      email: email,
-                                                      password: senha);
+                          // Verifica se o email e a senha foram fornecidos
+                          if (email.isNotEmpty && senha.isNotEmpty) {
+                            // Verifica se o email é válido
+                            if (email.contains('@unicv.edu.br')) {
+                              // Se todas as condições forem atendidas, redireciona para a tela de chat
+                              final credenciaisUsuario =
+                                            await _firebaseAuth
+                                                .createUserWithEmailAndPassword(
+                                                    email: email,
+                                                    password: senha);
 
-                                                    await FirebaseFirestore.instance.collection('usuarios').doc(credenciaisUsuario.user!.uid).set({
-                                                      'email' : email,
-                                                      'isAdmin': true,
-                                                      'usuario': nomecompleto,
-                                                    });
-                                Navigator.of(context)
-                                  .pushReplacementNamed('/turma');
-                              }
-                            }else {
-                              // Exibe uma mensagem de erro se o email ou senha estiverem vazios
-                              print('Por favor, insira seu email e senha!');
+                                                  await FirebaseFirestore.instance.collection('usuarios').doc(credenciaisUsuario.user!.uid).set({
+                                                    'email' : email,
+                                                    'isAdmin': true,
+                                                    'isProfessor': false,
+                                                    'isCoordenador': true,
+                                                    'usuario': nomecompleto,
+                                                  });
+                              Navigator.of(context)
+                                .pushReplacementNamed('/turma');
                             }
+                          }else {
+                            // Exibe uma mensagem de erro se o email ou senha estiverem vazios
+                            print('Por favor, insira seu email e senha!');
                           }
                         } on FirebaseAuthException catch (error) {
                           String mensagem =
