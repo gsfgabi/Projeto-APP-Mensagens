@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curso_flutter_flutterando/chat_page.dart';
+import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'app_controller.dart';
-import 'chat_page.dart';
-import 'login_page.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({super.key});
+  const ClassPage({Key? key});
 
   @override
   State<ClassPage> createState() => _ClassPageState();
@@ -17,7 +15,7 @@ class ClassPage extends StatefulWidget {
 
 class _ClassPageState extends State<ClassPage> {
   final TextEditingController nomeController = TextEditingController();
-  final TextEditingController semestreController = TextEditingController();
+  int? _selectedSemester;
   final TextEditingController codigoController = TextEditingController();
   String? _selectedArea;
 
@@ -29,20 +27,20 @@ class _ClassPageState extends State<ClassPage> {
           .collection('salas-participantes')
           .where('email', arrayContains: usuarioAutenticado!.email)
           .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, salasSnapshot) {
+        if (salasSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (snapshot.hasError) {
+        if (salasSnapshot.hasError) {
           return const Center(
             child: Text('Algum erro desconhecido ocorreu'),
           );
         }
 
-        final chatsCarregados = snapshot.data!.docs;
+        final salasCarregadas = salasSnapshot.data!.docs;
 
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -54,7 +52,6 @@ class _ClassPageState extends State<ClassPage> {
             ),
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
-              const CustomSwitcher(),
               IconButton(
                 onPressed: () async {
                   await _firebaseAuth.signOut();
@@ -73,30 +70,47 @@ class _ClassPageState extends State<ClassPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 100),
-                  child: Image.asset('assets/images/logo.png'),
+                  //child: Image.asset('assets/images/logo.png'),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    itemCount: chatsCarregados.length,
-                    itemBuilder: (context, index) {
-                      final chat = chatsCarregados[index];
-                      return ListTile(
-                        leading: _buildIconForType(chat['area']),
-                        contentPadding: const EdgeInsets.all(8),
-                        title: Text(chatsCarregados[index].id),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChatPage(chatId: chatsCarregados[index].id),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  child: ListView(
+                    children: [
+                      _buildSectionHeader('Salas Participantes'),
+                      ...salasCarregadas.map((sala) {
+                        return FutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection('salas-participantes')
+                              .doc(sala.id) // Utilizamos o ID da sala para recuperar os dados do curso
+                              .get(),
+                          builder: (context, cursoSnapshot) {
+                            if (cursoSnapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            if (cursoSnapshot.hasError) {
+                              return Text('Erro ao carregar curso: ${cursoSnapshot.error}');
+                            }
+                            final cursoData = cursoSnapshot.data!.data() as Map<String, dynamic>;
+                            return ListTile(
+                              leading: _buildIconForType(cursoData['area']),
+                              contentPadding: const EdgeInsets.all(8),
+                              title: Text(cursoData['nome']),
+                              subtitle: Text(
+                                  'Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']}'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChatPage(chatId: sala.id),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ],
                   ),
                 ),
               ],
@@ -121,12 +135,19 @@ class _ClassPageState extends State<ClassPage> {
                                   decoration:
                                       const InputDecoration(labelText: 'Nome do curso'),
                                 ),
-                                TextField(
-                                  controller: semestreController,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
+                                DropdownButtonFormField<int>(
+                                  value: _selectedSemester,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedSemester = value;
+                                    });
+                                  },
+                                  items: List.generate(12, (index) => index + 1)
+                                      .map((semester) => DropdownMenuItem<int>(
+                                            value: semester,
+                                            child: Text('$semester°'),
+                                          ))
+                                      .toList(),
                                   decoration: const InputDecoration(labelText: 'Semestre'),
                                 ),
                                 TextField(
@@ -193,7 +214,8 @@ class _ClassPageState extends State<ClassPage> {
                                       ),
                                     ),
                                   ],
-                                  decoration: const InputDecoration(labelText: 'Área de Conhecimento'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Área de Conhecimento'),
                                 ),
                               ],
                             ),
@@ -224,6 +246,16 @@ class _ClassPageState extends State<ClassPage> {
     );
   }
 
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
   Widget _buildIconForType(String area) {
     switch (area) {
       case 'math':
@@ -241,88 +273,75 @@ class _ClassPageState extends State<ClassPage> {
     }
   }
 
-void _salvarCurso(BuildContext context) async {
+  void _salvarCurso(BuildContext context) async {
+    if (nomeController.text.trim().isEmpty ||
+        _selectedSemester == null ||
+        codigoController.text.trim().isEmpty ||
+        _selectedArea == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos antes de salvar'),
+        ),
+      );
+      return;
+    }
 
-  if (nomeController.text.trim().isEmpty ||
-      semestreController.text.trim().isEmpty ||
-      codigoController.text.trim().isEmpty ||
-      _selectedArea == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Preencha todos os campos antes de salvar'),
-      ),
-    );
-    return;
-  }
+    // Normalizar os campos para maiúsculas
+    final nome = nomeController.text.trim().toUpperCase();
+    final codigo = codigoController.text.trim().toUpperCase();
 
-  // Normalizar os campos para maiúsculas
-  final nome = nomeController.text.trim().toUpperCase();
-  final codigo = codigoController.text.trim().toUpperCase();
+    // Verificar se o código do curso já existe
+    final cursosSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('codigo', isEqualTo: codigo)
+        .get();
 
-  // Verificar se o código do curso já existe
-  final cursosSnapshot = await FirebaseFirestore.instance
-      .collection('salas-participantes')
-      .where('codigo', isEqualTo: codigo)
-      .get();
+    if (cursosSnapshot.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Já existe um curso com o código informado'),
+        ),
+      );
+      return;
+    }
 
-  if (cursosSnapshot.docs.isNotEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Já existe um curso com o código informado'),
-      ),
-    );
-    return;
-  }
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final email = [user.email];
 
-  try {
-    await FirebaseFirestore.instance.collection('salas-participantes').add({
-      'nome': nome,
-      'semestre': semestreController.text,
-      'codigo': codigo,
-      'area': _selectedArea,
-    });
+      await FirebaseFirestore.instance.collection('salas-participantes').add({
+        'nome': nome,
+        'semestre': _selectedSemester,
+        'codigo': codigo,
+        'area': _selectedArea,
+        'email': email,
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Curso cadastrado com sucesso!'),
-      ),
-    );
-    // Limpar os controladores após o cadastro
-    nomeController.clear();
-    semestreController.clear();
-    codigoController.clear();
-    setState(() {
-      _selectedArea = null;
-    });
-    Navigator.of(context).pop(); // Fechar o modal após o cadastro
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erro ao cadastrar o curso. Tente novamente.'),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Curso cadastrado com sucesso!'),
+        ),
+      );
+      // Limpar os controladores após o cadastro
+      nomeController.clear();
+      setState(() {
+        _selectedSemester = null;
+        _selectedArea = null;
+      });
+      codigoController.clear();
+      Navigator.of(context).pop(); // Fechar o modal após o cadastro
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao cadastrar o curso. Tente novamente.'),
         ),
       );
     }
   }
 }
 
-class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        AppController.instance.changeTheme();
-      },
-      child: ValueListenableBuilder(
-        valueListenable: AppController.instance,
-        builder: (context, value, child) {
-          return Icon(
-            value ? Icons.wb_sunny : Icons.nightlight_round,
-            color: Colors.white,
-          );
-        },
-      ),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    home: ClassPage(),
+  ));
 }
