@@ -9,7 +9,7 @@ import 'login_page.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({super.key});
+  const ClassPage({Key? key});
 
   @override
   State<ClassPage> createState() => _ClassPageState();
@@ -17,7 +17,7 @@ class ClassPage extends StatefulWidget {
 
 class _ClassPageState extends State<ClassPage> {
   final TextEditingController nomeController = TextEditingController();
-  final TextEditingController semestreController = TextEditingController();
+  int? _selectedSemester;
   final TextEditingController codigoController = TextEditingController();
   String? _selectedArea;
 
@@ -104,120 +104,127 @@ class _ClassPageState extends State<ClassPage> {
           ),
           floatingActionButton: usuarioAutenticado.email == 'admin@unicv.edu.br'
               ? FloatingActionButton(
-                  backgroundColor: const Color(0xFF4B9460),
-                  foregroundColor: Colors.white,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Cadastrar Curso'),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  controller: nomeController,
-                                  decoration:
-                                      const InputDecoration(labelText: 'Nome do curso'),
-                                ),
-                                TextField(
-                                  controller: semestreController,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: const InputDecoration(labelText: 'Semestre'),
-                                ),
-                                TextField(
-                                  controller: codigoController,
-                                  decoration:
-                                      const InputDecoration(labelText: 'Código da turma'),
-                                ),
-                                DropdownButtonFormField<String>(
-                                  value: _selectedArea,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedArea = value;
-                                    });
-                                  },
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'MATEMÁTICA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.calculate),
-                                          SizedBox(width: 10),
-                                          Text('MATEMÁTICA'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'CIÊNCIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.science),
-                                          SizedBox(width: 10),
-                                          Text('CIÊNCIA'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'HISTÓRIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.history_edu),
-                                          SizedBox(width: 10),
-                                          Text('HISTÓRIA'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'LINGUAGENS',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.language),
-                                          SizedBox(width: 10),
-                                          Text('LINGUAGENS'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'TECNOLOGIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.computer),
-                                          SizedBox(width: 10),
-                                          Text('TECNOLOGIA'),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                  decoration: const InputDecoration(labelText: 'Área de Conhecimento'),
-                                ),
-                              ],
-                            ),
+            backgroundColor: const Color(0xFF4B9460),
+            foregroundColor: Colors.white,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Cadastrar Curso'),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            controller: nomeController,
+                            decoration:
+                            const InputDecoration(labelText: 'Nome do curso'),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancelar'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                _salvarCurso(context);
-                              },
-                              child: const Text('Adicionar'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.add),
-                )
+                          DropdownButtonFormField<int>(
+                            value: _selectedSemester,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedSemester = value;
+                              });
+                            },
+                            items: List.generate(12, (index) => index + 1)
+                                .map((semester) => DropdownMenuItem<int>(
+                              value: semester,
+                              child: Text('$semesterº'),
+                            ))
+                                .toList(),
+                            decoration: const InputDecoration(labelText: 'Semestre'),
+                          ),
+                          TextField(
+                            controller: codigoController,
+                            decoration:
+                            const InputDecoration(labelText: 'Código da turma'),
+                          ),
+                          DropdownButtonFormField<String>(
+                            value: _selectedArea,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedArea = value;
+                              });
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'MATEMÁTICA',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.calculate),
+                                    SizedBox(width: 10),
+                                    Text('MATEMÁTICA'),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 'CIÊNCIA',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.science),
+                                    SizedBox(width: 10),
+                                    Text('CIÊNCIA'),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 'HISTÓRIA',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.history_edu),
+                                    SizedBox(width: 10),
+                                    Text('HISTÓRIA'),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 'LINGUAGENS',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.language),
+                                    SizedBox(width: 10),
+                                    Text('LINGUAGENS'),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 'TECNOLOGIA',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.computer),
+                                    SizedBox(width: 10),
+                                    Text('TECNOLOGIA'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            decoration: const InputDecoration(labelText: 'Área de Conhecimento'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _salvarCurso(context);
+                        },
+                        child: const Text('Adicionar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(Icons.add),
+          )
               : const SizedBox(),
         );
       },
@@ -241,64 +248,64 @@ class _ClassPageState extends State<ClassPage> {
     }
   }
 
-void _salvarCurso(BuildContext context) async {
+  void _salvarCurso(BuildContext context) async {
 
-  if (nomeController.text.trim().isEmpty ||
-      semestreController.text.trim().isEmpty ||
-      codigoController.text.trim().isEmpty ||
-      _selectedArea == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Preencha todos os campos antes de salvar'),
-      ),
-    );
-    return;
-  }
+    if (nomeController.text.trim().isEmpty ||
+        _selectedSemester == null ||
+        codigoController.text.trim().isEmpty ||
+        _selectedArea == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos antes de salvar'),
+        ),
+      );
+      return;
+    }
 
-  // Normalizar os campos para maiúsculas
-  final nome = nomeController.text.trim().toUpperCase();
-  final codigo = codigoController.text.trim().toUpperCase();
+    // Normalizar os campos para maiúsculas
+    final nome = nomeController.text.trim().toUpperCase();
+    final codigo = codigoController.text.trim().toUpperCase();
 
-  // Verificar se o código do curso já existe
-  final cursosSnapshot = await FirebaseFirestore.instance
-      .collection('salas-participantes')
-      .where('codigo', isEqualTo: codigo)
-      .get();
+    // Verificar se o código do curso já existe
+    final cursosSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('codigo', isEqualTo: codigo)
+        .get();
 
-  if (cursosSnapshot.docs.isNotEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Já existe um curso com o código informado'),
-      ),
-    );
-    return;
-  }
+    if (cursosSnapshot.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Já existe um curso com o código informado'),
+        ),
+      );
+      return;
+    }
 
-  try {
-    await FirebaseFirestore.instance.collection('salas-participantes').add({
-      'nome': nome,
-      'semestre': semestreController.text,
-      'codigo': codigo,
-      'area': _selectedArea,
-    });
+    try {
+      await FirebaseFirestore.instance.collection('salas-participantes').add({
+        'nome': nome,
+        'semestre': _selectedSemester,
+        'codigo': codigo,
+        'area': _selectedArea,
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Curso cadastrado com sucesso!'),
-      ),
-    );
-    // Limpar os controladores após o cadastro
-    nomeController.clear();
-    semestreController.clear();
-    codigoController.clear();
-    setState(() {
-      _selectedArea = null;
-    });
-    Navigator.of(context).pop(); // Fechar o modal após o cadastro
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erro ao cadastrar o curso. Tente novamente.'),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Curso cadastrado com sucesso!'),
+        ),
+      );
+      // Limpar os controladores após o cadastro
+      nomeController.clear();
+      setState(() {
+        _selectedSemester = null;
+        _selectedArea = null;
+      });
+      codigoController.clear();
+      Navigator.of(context).pop(); // Fechar o modal após o cadastro
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao cadastrar o curso. Tente novamente.'),
         ),
       );
     }
@@ -306,7 +313,7 @@ void _salvarCurso(BuildContext context) async {
 }
 
 class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({super.key});
+  const CustomSwitcher({Key? key});
 
   @override
   Widget build(BuildContext context) {
