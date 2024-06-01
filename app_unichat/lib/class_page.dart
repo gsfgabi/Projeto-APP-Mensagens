@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curso_flutter_flutterando/chat_page.dart';
+import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'app_controller.dart';
-import 'chat_page.dart';
-import 'login_page.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
@@ -29,20 +27,20 @@ class _ClassPageState extends State<ClassPage> {
           .collection('salas-participantes')
           .where('email', arrayContains: usuarioAutenticado!.email)
           .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, salasSnapshot) {
+        if (salasSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (snapshot.hasError) {
+        if (salasSnapshot.hasError) {
           return const Center(
             child: Text('Algum erro desconhecido ocorreu'),
           );
         }
 
-        final chatsCarregados = snapshot.data!.docs;
+        final salasCarregadas = salasSnapshot.data!.docs;
 
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -54,7 +52,6 @@ class _ClassPageState extends State<ClassPage> {
             ),
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
-              const CustomSwitcher(),
               IconButton(
                 onPressed: () async {
                   await _firebaseAuth.signOut();
@@ -73,30 +70,47 @@ class _ClassPageState extends State<ClassPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 100),
-                  child: Image.asset('assets/images/logo.png'),
+                  //child: Image.asset('assets/images/logo.png'),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    itemCount: chatsCarregados.length,
-                    itemBuilder: (context, index) {
-                      final chat = chatsCarregados[index];
-                      return ListTile(
-                        leading: _buildIconForType(chat['area']),
-                        contentPadding: const EdgeInsets.all(8),
-                        title: Text(chatsCarregados[index].id),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChatPage(chatId: chatsCarregados[index].id),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  child: ListView(
+                    children: [
+                      _buildSectionHeader('Salas Participantes'),
+                      ...salasCarregadas.map((sala) {
+                        return FutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection('salas-participantes')
+                              .doc(sala.id) // Utilizamos o ID da sala para recuperar os dados do curso
+                              .get(),
+                          builder: (context, cursoSnapshot) {
+                            if (cursoSnapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            if (cursoSnapshot.hasError) {
+                              return Text('Erro ao carregar curso: ${cursoSnapshot.error}');
+                            }
+                            final cursoData = cursoSnapshot.data!.data() as Map<String, dynamic>;
+                            return ListTile(
+                              leading: _buildIconForType(cursoData['area']),
+                              contentPadding: const EdgeInsets.all(8),
+                              title: Text(cursoData['nome']),
+                              subtitle: Text(
+                                  'Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']}'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChatPage(chatId: sala.id),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ],
                   ),
                 ),
               ],
@@ -104,130 +118,141 @@ class _ClassPageState extends State<ClassPage> {
           ),
           floatingActionButton: usuarioAutenticado.email == 'admin@unicv.edu.br'
               ? FloatingActionButton(
-            backgroundColor: const Color(0xFF4B9460),
-            foregroundColor: Colors.white,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Cadastrar Curso'),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: nomeController,
-                            decoration:
-                            const InputDecoration(labelText: 'Nome do curso'),
+                  backgroundColor: const Color(0xFF4B9460),
+                  foregroundColor: Colors.white,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Cadastrar Curso'),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextField(
+                                  controller: nomeController,
+                                  decoration:
+                                      const InputDecoration(labelText: 'Nome do curso'),
+                                ),
+                                DropdownButtonFormField<int>(
+                                  value: _selectedSemester,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedSemester = value;
+                                    });
+                                  },
+                                  items: List.generate(12, (index) => index + 1)
+                                      .map((semester) => DropdownMenuItem<int>(
+                                            value: semester,
+                                            child: Text('$semester°'),
+                                          ))
+                                      .toList(),
+                                  decoration: const InputDecoration(labelText: 'Semestre'),
+                                ),
+                                TextField(
+                                  controller: codigoController,
+                                  decoration:
+                                      const InputDecoration(labelText: 'Código da turma'),
+                                ),
+                                DropdownButtonFormField<String>(
+                                  value: _selectedArea,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedArea = value;
+                                    });
+                                  },
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'MATEMÁTICA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.calculate),
+                                          SizedBox(width: 10),
+                                          Text('MATEMÁTICA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'CIÊNCIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.science),
+                                          SizedBox(width: 10),
+                                          Text('CIÊNCIA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'HISTÓRIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.history_edu),
+                                          SizedBox(width: 10),
+                                          Text('HISTÓRIA'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'LINGUAGENS',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.language),
+                                          SizedBox(width: 10),
+                                          Text('LINGUAGENS'),
+                                        ],
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'TECNOLOGIA',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.computer),
+                                          SizedBox(width: 10),
+                                          Text('TECNOLOGIA'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  decoration: const InputDecoration(
+                                      labelText: 'Área de Conhecimento'),
+                                ),
+                              ],
+                            ),
                           ),
-                          DropdownButtonFormField<int>(
-                            value: _selectedSemester,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedSemester = value;
-                              });
-                            },
-                            items: List.generate(12, (index) => index + 1)
-                                .map((semester) => DropdownMenuItem<int>(
-                              value: semester,
-                              child: Text('$semesterº'),
-                            ))
-                                .toList(),
-                            decoration: const InputDecoration(labelText: 'Semestre'),
-                          ),
-                          TextField(
-                            controller: codigoController,
-                            decoration:
-                            const InputDecoration(labelText: 'Código da turma'),
-                          ),
-                          DropdownButtonFormField<String>(
-                            value: _selectedArea,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedArea = value;
-                              });
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: 'MATEMÁTICA',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.calculate),
-                                    SizedBox(width: 10),
-                                    Text('MATEMÁTICA'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'CIÊNCIA',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.science),
-                                    SizedBox(width: 10),
-                                    Text('CIÊNCIA'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'HISTÓRIA',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.history_edu),
-                                    SizedBox(width: 10),
-                                    Text('HISTÓRIA'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'LINGUAGENS',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.language),
-                                    SizedBox(width: 10),
-                                    Text('LINGUAGENS'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'TECNOLOGIA',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.computer),
-                                    SizedBox(width: 10),
-                                    Text('TECNOLOGIA'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            decoration: const InputDecoration(labelText: 'Área de Conhecimento'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Cancelar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _salvarCurso(context);
-                        },
-                        child: const Text('Adicionar'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: const Icon(Icons.add),
-          )
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _salvarCurso(context);
+                              },
+                              child: const Text('Adicionar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                )
               : const SizedBox(),
         );
       },
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -249,7 +274,6 @@ class _ClassPageState extends State<ClassPage> {
   }
 
   void _salvarCurso(BuildContext context) async {
-
     if (nomeController.text.trim().isEmpty ||
         _selectedSemester == null ||
         codigoController.text.trim().isEmpty ||
@@ -282,11 +306,15 @@ class _ClassPageState extends State<ClassPage> {
     }
 
     try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final email = [user.email];
+
       await FirebaseFirestore.instance.collection('salas-participantes').add({
         'nome': nome,
         'semestre': _selectedSemester,
         'codigo': codigo,
         'area': _selectedArea,
+        'email': email,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -312,24 +340,8 @@ class _ClassPageState extends State<ClassPage> {
   }
 }
 
-class CustomSwitcher extends StatelessWidget {
-  const CustomSwitcher({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        AppController.instance.changeTheme();
-      },
-      child: ValueListenableBuilder(
-        valueListenable: AppController.instance,
-        builder: (context, value, child) {
-          return Icon(
-            value ? Icons.wb_sunny : Icons.nightlight_round,
-            color: Colors.white,
-          );
-        },
-      ),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    home: ClassPage(),
+  ));
 }
