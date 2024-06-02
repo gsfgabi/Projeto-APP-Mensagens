@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:curso_flutter_flutterando/chat_page.dart';
+//import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
@@ -51,7 +53,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         onChanged: (text) {
-                          nomecompleto = text;
+                          nomecompleto = text.toUpperCase(); // Convertendo para maiúsculas
                         },
                         decoration: const InputDecoration(
                           labelText: 'Nome Completo',
@@ -65,7 +67,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         },
                         onSaved: (valorDigitado) {
                           if (valorDigitado != null) {
-                            nomecompleto = valorDigitado;
+                            nomecompleto = valorDigitado.toUpperCase(); // Convertendo para maiúsculas
                           }
                         },
                       ),
@@ -176,13 +178,19 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: TextFormField(
                         onChanged: (text) {
-                          codigoturma = text;
+                          codigoturma = text.toUpperCase(); // Convertendo para maiúsculas
                         },
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: 'Codigo da Turma',
                           border: OutlineInputBorder(),
                         ),
+                        validator: (valor) {
+                          if (valor == null || valor.trim().isEmpty) {
+                            return 'Por favor, insira um código de turma válido!';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -196,34 +204,20 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         }
                         _chaveForm.currentState!.save();
 
-                        if (email == 'admin' && senha == 'admin') {
-                          Navigator.of(context)
-                              .pushNamed('/RegisterTeacher');
+                        // Verificar se o código da turma é válido
+                        bool isTurmaValida = await verificarCodigoTurma();
+
+                        if (isTurmaValida) {
+                          // Cadastrar o usuário
+                          await cadastrarUsuario();
+                          // Adicionar o usuário à turma
+                          await adicionarUsuarioNaTurma();
                         } else {
-                          if (email.isNotEmpty && senha.isNotEmpty) {
-                            if (email.contains('@unicv.edu.br')) {
-                              final credenciaisUsuario =
-                                  await _firebaseAuth
-                                      .createUserWithEmailAndPassword(
-                                email: email,
-                                password: senha,
-                              );
-
-                              await FirebaseFirestore.instance
-                                  .collection('usuarios')
-                                  .doc(credenciaisUsuario.user!.uid)
-                                  .set({
-                                'email': email,
-                                'isAdmin': false,
-                                'usuario': nomecompleto,
-                              });
-
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/turma');
-                            }
-                          } else {
-                            print('Por favor, insira seu email e senha!');
-                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('O código da turma é inválido!'),
+                            ),
+                          );
                         }
                       },
                       child: const Text(
@@ -251,4 +245,68 @@ class _RegisterStudentState extends State<RegisterStudent> {
       ),
     );
   }
+
+  Future<bool> verificarCodigoTurma() async {
+    // Consultar o Firestore para verificar se o código da turma é válido
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('codigo', isEqualTo: codigoturma)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  }
+
+  Future<void> cadastrarUsuario() async {
+    if (email == 'admin' && senha == 'admin') {
+      Navigator.of(context).pushNamed('/RegisterTeacher');
+    } else {
+      if (email.isNotEmpty && senha.isNotEmpty) {
+        if (email.contains('@unicv.edu.br')) {
+          final credenciaisUsuario =
+              await _firebaseAuth.createUserWithEmailAndPassword(
+            email: email,
+            password: senha,
+          );
+
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(credenciaisUsuario.user!.uid)
+              .set({
+            'email': email,
+            'isAdmin': false,
+            'usuario': nomecompleto,
+          });
+
+          Navigator.of(context).pushReplacementNamed('/turma');
+        }
+      } else {
+        print('Por favor, insira seu email e senha!');
+      }
+    }
+  }
+
+  Future<void> adicionarUsuarioNaTurma() async {
+    // Consultar a turma correspondente
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('codigo', isEqualTo: codigoturma)
+        .get();
+
+    // Obter o ID do documento da turma
+    String? turmaId = querySnapshot.docs.first.id;
+
+    // Adicionar o e-mail do usuário ao array de e-mails na turma
+    await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .doc(turmaId)
+        .update({
+      'email': FieldValue.arrayUnion([email])
+    });
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: RegisterStudent(),
+  ));
 }
