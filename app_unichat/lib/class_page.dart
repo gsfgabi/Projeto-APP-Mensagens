@@ -3,11 +3,13 @@ import 'package:curso_flutter_flutterando/chat_page.dart';
 import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'chat_page.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({Key? key});
+  const ClassPage({super.key});
 
   @override
   State<ClassPage> createState() => _ClassPageState();
@@ -18,6 +20,19 @@ class _ClassPageState extends State<ClassPage> {
   int? _selectedSemester;
   final TextEditingController codigoController = TextEditingController();
   String? _selectedArea;
+
+  void configuraNotificacoes(chatsCarregados, usuarioAutenticado) async {
+    final firebaseMessageria = FirebaseMessaging.instance;
+    await firebaseMessageria.requestPermission();
+
+    for (var documento in chatsCarregados) {
+      for (var email in documento['email']) {
+        if (email == usuarioAutenticado.email) {
+          firebaseMessageria.subscribeToTopic(documento.id);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +56,7 @@ class _ClassPageState extends State<ClassPage> {
         }
 
         final salasCarregadas = salasSnapshot.data!.docs;
+        configuraNotificacoes(salasCarregadas, usuarioAutenticado);
 
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -68,8 +84,8 @@ class _ClassPageState extends State<ClassPage> {
             padding: const EdgeInsets.all(8),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 100),
                   //child: Image.asset('assets/images/logo.png'),
                 ),
                 const SizedBox(height: 20),
@@ -85,7 +101,7 @@ class _ClassPageState extends State<ClassPage> {
                               .get(),
                           builder: (context, cursoSnapshot) {
                             if (cursoSnapshot.connectionState == ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             }
                             if (cursoSnapshot.hasError) {
                               return Text('Erro ao carregar curso: ${cursoSnapshot.error}');
@@ -102,14 +118,14 @@ class _ClassPageState extends State<ClassPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ChatPage(chatId: sala.id),
+                                        ChatPage(chatId: sala.id, curso: cursoData['nome']),
                                   ),
                                 );
                               },
                             );
                           },
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),
@@ -251,7 +267,7 @@ class _ClassPageState extends State<ClassPage> {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -341,7 +357,7 @@ class _ClassPageState extends State<ClassPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp( const MaterialApp(
     home: ClassPage(),
   ));
 }

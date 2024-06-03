@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterStudent extends StatefulWidget {
-  const RegisterStudent({Key? key});
+  const RegisterStudent({super.key});
 
   @override
   State<RegisterStudent> createState() => _RegisterStudentState();
@@ -274,6 +274,8 @@ class _RegisterStudentState extends State<RegisterStudent> {
               .set({
             'email': email,
             'isAdmin': false,
+            'isProfessor': false,
+            'isCoordenador': false,
             'usuario': nomecompleto,
           });
 
@@ -306,7 +308,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: RegisterStudent(),
   ));
 }

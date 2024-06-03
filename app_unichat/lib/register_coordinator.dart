@@ -158,8 +158,7 @@ class _RegisterCoodinatorState extends State<RegisterCoodinator> {
                                                     'isCoordenador': true,
                                                     'usuario': nomecompleto,
                                                   });
-                              Navigator.of(context)
-                                .pushReplacementNamed('/turma');
+                              Navigator.of(context).pushReplacementNamed('/turma');
                             }
                           }else {
                             // Exibe uma mensagem de erro se o email ou senha estiverem vazios
@@ -167,7 +166,7 @@ class _RegisterCoodinatorState extends State<RegisterCoodinator> {
                           }
                         } on FirebaseAuthException catch (error) {
                           String mensagem =
-                              'Falha no cadastro de novo Usuário';
+                              'Falha no cadastro de novo coordenador';
                           if (error.code ==
                               'email-already-in-use') {
                             mensagem = 'Email já utilizado';

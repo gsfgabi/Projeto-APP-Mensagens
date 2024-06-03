@@ -9,6 +9,10 @@ import 'register_coordinator.dart';
 import 'forgot_password_page.dart';
 import 'chat_page.dart';
 
+// import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
+
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
 
@@ -31,7 +35,7 @@ class AppWidget extends StatelessWidget {
               '/RegisterTeacher': (context) => const RegisterTeacher(),
               '/RegisterCoodinator': (context) => const RegisterCoodinator(),
               '/esqueciSenha': (context) => const ForgotPasswordPage(),
-              '/conversa': (context) => const ChatPage(chatId: "",),
+              '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
             },
             home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
