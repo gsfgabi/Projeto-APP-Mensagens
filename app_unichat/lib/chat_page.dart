@@ -7,7 +7,8 @@ final _firebaseAuth = FirebaseAuth.instance;
 
 class ChatPage extends StatefulWidget {
   final String chatId;
-  const ChatPage({super.key, required this.chatId});
+  final String curso;
+  const ChatPage({super.key, required this.chatId, required this.curso});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -20,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF4B9460),
         title: Text(
-          widget.chatId,
+          widget.curso,
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
