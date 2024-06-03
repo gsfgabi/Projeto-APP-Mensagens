@@ -10,7 +10,7 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({Key? key, required this.chatId, required this.curso}) : super(key: key);
+  const ChatPage({super.key, required this.chatId, required this.curso});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -70,14 +70,14 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _mensagemController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Digite uma mensagem...',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _enviarMensagem,
                 ),
               ],
