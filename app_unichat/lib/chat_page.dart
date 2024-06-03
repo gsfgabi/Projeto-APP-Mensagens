@@ -73,6 +73,9 @@ class _ChatPageState extends State<ChatPage> {
                     decoration: const InputDecoration(
                       hintText: 'Digite uma mensagem...',
                       border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF4B9460), width: 1.0),
+                      ),
                     ),
                   ),
                 ),
