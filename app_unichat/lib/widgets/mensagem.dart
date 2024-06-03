@@ -3,66 +3,53 @@ import 'package:flutter/material.dart';
 class Mensagem extends StatelessWidget {
   final String conteudoMensagem;
   final String nomeUsuario;
+  final String dataHora;
+
   const Mensagem({
-    super.key,
+    Key? key,
     required this.conteudoMensagem,
     required this.nomeUsuario,
-  });
+    required this.dataHora,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          child: Text(
+            nomeUsuario,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 4),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 13,
-                      right: 13,
-                    ),
-                    child: Text(
-                      nomeUsuario, //Nome do usuario
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 14,
-                    ),
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 12,
-                    ),
-                    child: Text(
-                      conteudoMensagem, //conteudo da mensagem
-                      style: const TextStyle(
-                        height: 1.3,
-                        color: Colors.black87,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                ],
+              Text(
+                conteudoMensagem,
+                style: const TextStyle(
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                dataHora,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
