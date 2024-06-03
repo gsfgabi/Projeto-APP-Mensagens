@@ -6,11 +6,11 @@ class Mensagem extends StatelessWidget {
   final String dataHora;
 
   const Mensagem({
-    Key? key,
+    super.key,
     required this.conteudoMensagem,
     required this.nomeUsuario,
     required this.dataHora,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

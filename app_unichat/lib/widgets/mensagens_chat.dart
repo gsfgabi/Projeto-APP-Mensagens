@@ -6,7 +6,7 @@ import 'mensagem.dart';
 
 class MensagensChat extends StatelessWidget {
   final String chatId;
-  const MensagensChat({Key? key, required this.chatId}) : super(key: key);
+  const MensagensChat({super.key, required this.chatId});
 
   @override
   Widget build(BuildContext context) {
