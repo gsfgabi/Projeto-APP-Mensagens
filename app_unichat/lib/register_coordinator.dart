@@ -153,12 +153,12 @@ class _RegisterCoodinatorState extends State<RegisterCoodinator> {
 
                                                   await FirebaseFirestore.instance.collection('usuarios').doc(credenciaisUsuario.user!.uid).set({
                                                     'email' : email,
-                                                    'isAdmin': true,
+                                                    // 'isAdmin': true,
                                                     'isProfessor': false,
                                                     'isCoordenador': true,
                                                     'usuario': nomecompleto,
                                                   });
-                              Navigator.of(context).pushReplacementNamed('/turma');
+                              Navigator.of(context).pushReplacementNamed('/login');
                             }
                           }else {
                             // Exibe uma mensagem de erro se o email ou senha estiverem vazios

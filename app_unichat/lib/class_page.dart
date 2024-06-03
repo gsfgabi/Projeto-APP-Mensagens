@@ -274,15 +274,15 @@ class _ClassPageState extends State<ClassPage> {
 
   Widget _buildIconForType(String area) {
     switch (area) {
-      case 'math':
+      case 'MATEMÁTICA':
         return const Icon(Icons.calculate);
-      case 'science':
+      case 'CIÊNCIA':
         return const Icon(Icons.science);
-      case 'history':
+      case 'HISTÓRIA':
         return const Icon(Icons.history_edu);
-      case 'language':
+      case 'LINGUAGENS':
         return const Icon(Icons.language);
-      case 'technology':
+      case 'TECNOLOGIA':
         return const Icon(Icons.computer);
       default:
         return const Icon(Icons.class_);
@@ -324,6 +324,7 @@ class _ClassPageState extends State<ClassPage> {
     try {
       final user = FirebaseAuth.instance.currentUser!;
       final email = [user.email];
+      // final admin = [user.usuario];
 
       await FirebaseFirestore.instance.collection('salas-participantes').add({
         'nome': nome,
