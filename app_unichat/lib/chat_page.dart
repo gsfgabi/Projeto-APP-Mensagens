@@ -1,20 +1,40 @@
 import 'package:flutter/material.dart';
-import 'widgets/mensagens_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login_page.dart';
+import 'widgets/mensagens_chat.dart';
 
-final _firebaseAuth = FirebaseAuth.instance;
+final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
-  const ChatPage({super.key, required this.chatId, required this.curso});
+
+  const ChatPage({Key? key, required this.chatId, required this.curso}) : super(key: key);
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final TextEditingController _mensagemController = TextEditingController();
+
+  void _enviarMensagem() {
+    final usuario = _firebaseAuth.currentUser;
+    if (usuario != null && _mensagemController.text.isNotEmpty) {
+      FirebaseFirestore.instance
+          .collection('salas-participantes')
+          .doc(widget.chatId)
+          .collection('mensagens')
+          .add({
+        'texto': _mensagemController.text,
+        'usuario': usuario.email,
+        'timestamp': Timestamp.now(),
+      });
+      _mensagemController.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +60,28 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-          MensagensChat(
-            chatId: widget.chatId,
+          Expanded(
+            child: MensagensChat(chatId: widget.chatId),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _mensagemController,
+                    decoration: InputDecoration(
+                      hintText: 'Digite uma mensagem...',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: _enviarMensagem,
+                ),
+              ],
+            ),
           ),
         ],
       ),
