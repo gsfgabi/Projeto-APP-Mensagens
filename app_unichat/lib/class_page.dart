@@ -154,9 +154,6 @@ class _ClassPageState extends State<ClassPage> {
                                 DropdownButtonFormField<int>(
                                   value: _selectedSemester,
                                   onChanged: (value) {
-                                    setState(() {
-                                      _selectedSemester = value;
-                                    });
                                   },
                                   items: List.generate(12, (index) => index + 1)
                                       .map((semester) => DropdownMenuItem<int>(
@@ -174,9 +171,6 @@ class _ClassPageState extends State<ClassPage> {
                                 DropdownButtonFormField<String>(
                                   value: _selectedArea,
                                   onChanged: (value) {
-                                    setState(() {
-                                      _selectedArea = value;
-                                    });
                                   },
                                   items: const [
                                     DropdownMenuItem(
