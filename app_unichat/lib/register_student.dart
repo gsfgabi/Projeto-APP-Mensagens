@@ -273,7 +273,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
               .doc(credenciaisUsuario.user!.uid)
               .set({
             'email': email,
-            // 'isAdmin': false,
+            'isAdmin': false,
             'isProfessor': false,
             'isCoordenador': false,
             'usuario': nomecompleto,
