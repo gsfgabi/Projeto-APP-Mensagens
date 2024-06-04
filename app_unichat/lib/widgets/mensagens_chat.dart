@@ -8,6 +8,19 @@ class MensagensChat extends StatelessWidget {
   final String chatId;
   const MensagensChat({super.key, required this.chatId});
 
+  Future<String> _buscarNomeUsuario(String emailUsuario) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .where('email', isEqualTo: emailUsuario)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.data()['usuario'];
+    }
+
+    return 'Usuário desconhecido';
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -38,8 +51,6 @@ class MensagensChat extends StatelessWidget {
 
         final mensagensCarregadas = snapshot.data!.docs;
 
-        print('Mensagens carregadas: $mensagensCarregadas');
-
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -48,16 +59,35 @@ class MensagensChat extends StatelessWidget {
               itemBuilder: (context, index) {
                 final mensagem = mensagensCarregadas[index];
                 final conteudoMensagem = mensagem['texto'];
-                final nomeUsuario = mensagem['usuario'];
+                final emailUsuario = mensagem['usuario'];
                 final timestamp = mensagem['timestamp'];
-                
+
                 // Formate a data e hora para o formato padrão brasileiro
                 final dataHoraFormatada = DateFormat('dd/MM/yyyy HH:mm').format((timestamp as Timestamp).toDate());
 
-                return Mensagem(
-                  conteudoMensagem: conteudoMensagem,
-                  nomeUsuario: nomeUsuario,
-                  dataHora: dataHoraFormatada,
+                return FutureBuilder(
+                  future: _buscarNomeUsuario(emailUsuario),
+                  builder: (context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Erro ao carregar o nome do usuário'),
+                      );
+                    }
+
+                    final nomeUsuario = snapshot.data ?? 'Usuário desconhecido';
+
+                    return Mensagem(
+                      conteudoMensagem: conteudoMensagem,
+                      nomeUsuario: nomeUsuario,
+                      dataHora: dataHoraFormatada,
+                    );
+                  },
                 );
               },
             ),
