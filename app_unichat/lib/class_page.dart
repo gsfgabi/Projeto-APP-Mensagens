@@ -4,7 +4,6 @@ import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'chat_page.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
@@ -20,6 +19,51 @@ class _ClassPageState extends State<ClassPage> {
   int? _selectedSemester;
   final TextEditingController codigoController = TextEditingController();
   String? _selectedArea;
+  bool isAdmin = false;
+  bool isProfessor = false;
+  bool isCoordenador = false;
+
+  List<String> cursos = [];
+  String? _selectedCurso;
+  bool isAddingNewCourse = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarPermissoes();
+    _carregarCursos();
+  }
+
+  Future<void> _verificarPermissoes() async {
+    final usuario = _firebaseAuth.currentUser;
+    if (usuario != null) {
+      final usuarioDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .where('email', isEqualTo: usuario.email)
+          .get();
+
+      if (usuarioDoc.docs.isNotEmpty) {
+        final dadosUsuario = usuarioDoc.docs.first.data();
+        setState(() {
+          isAdmin = dadosUsuario['isAdmin'] ?? false;
+          isProfessor = dadosUsuario['isProfessor'] ?? false;
+          isCoordenador = dadosUsuario['isCoordenador'] ?? false;
+        });
+      }
+    }
+  }
+
+Future<void> _carregarCursos() async {
+  final cursosSnapshot =
+      await FirebaseFirestore.instance.collection('salas-participantes').get();
+  setState(() {
+    cursos = cursosSnapshot.docs.map((doc) => doc['nome'] as String).toList();
+    cursos.sort(); // Ordenar os cursos em ordem alfabética
+    cursos.insert(0, "Adicionar novo curso"); // Adicionar a opção "Adicionar novo curso" no início da lista
+  });
+}
+
+
 
   void configuraNotificacoes(chatsCarregados, usuarioAutenticado) async {
     final firebaseMessageria = FirebaseMessaging.instance;
@@ -31,6 +75,95 @@ class _ClassPageState extends State<ClassPage> {
           firebaseMessageria.subscribeToTopic(documento.id);
         }
       }
+    }
+  }
+
+  void _adicionarChat() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Adicionar Chat'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: _selectedCurso,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCurso = value;
+                    });
+                  },
+                  items: cursos.map((curso) {
+                    return DropdownMenuItem(
+                      value: curso,
+                      child: Text(curso),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(labelText: 'Selecione o Curso'),
+                ),
+                TextField(
+                  controller: codigoController,
+                  decoration: const InputDecoration(labelText: 'Código da Turma'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                _salvarChat(context);
+              },
+              child: const Text('Adicionar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _salvarChat(BuildContext context) async {
+    final curso = _selectedCurso?.trim().toUpperCase();
+    final codigo = codigoController.text.trim().toUpperCase();
+
+    final cursoSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('nome', isEqualTo: curso)
+        .where('codigo', isEqualTo: codigo)
+        .get();
+
+    if (cursoSnapshot.docs.isNotEmpty) {
+      final chatId = cursoSnapshot.docs.first.id;
+
+      await FirebaseFirestore.instance
+          .collection('salas-participantes')
+          .doc(chatId)
+          .update({
+        'email': FieldValue.arrayUnion([_firebaseAuth.currentUser!.email])
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Chat adicionado com sucesso!'),
+        ),
+      );
+
+      nomeController.clear();
+      codigoController.clear();
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Curso e/ou código da turma incorretos.'),
+        ),
+      );
     }
   }
 
@@ -132,7 +265,7 @@ class _ClassPageState extends State<ClassPage> {
               ],
             ),
           ),
-          floatingActionButton: usuarioAutenticado.email == 'admin@unicv.edu.br'
+          floatingActionButton: isCoordenador
               ? FloatingActionButton(
                   backgroundColor: const Color(0xFF4B9460),
                   foregroundColor: Colors.white,
@@ -142,16 +275,36 @@ class _ClassPageState extends State<ClassPage> {
                       builder: (context) {
                         return AlertDialog(
                           title: const Text('Cadastrar Curso'),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  controller: nomeController,
-                                  decoration:
-                                      const InputDecoration(labelText: 'Nome do curso'),
-                                ),
-                                DropdownButtonFormField<int>(
+                          content: StatefulBuilder(
+                            builder: (BuildContext context, StateSetter setState) {
+                              return SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    DropdownButtonFormField<String>(
+                                      value: _selectedCurso,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedCurso = value;
+                                          isAddingNewCourse = value == "Adicionar novo curso";
+                                        });
+                                      },
+                                      items: cursos.map((curso) {
+                                        return DropdownMenuItem(
+                                          value: curso,
+                                          child: Text(curso),
+                                        );
+                                      }).toList(),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Selecione ou adicione um curso'),
+                                    ),
+                                    if (isAddingNewCourse)
+                                      TextField(
+                                        controller: nomeController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Nome do Curso'),
+                                      ),
+                                  DropdownButtonFormField<int>(
                                   value: _selectedSemester,
                                   onChanged: (value) {
                                   },
@@ -163,72 +316,77 @@ class _ClassPageState extends State<ClassPage> {
                                       .toList(),
                                   decoration: const InputDecoration(labelText: 'Semestre'),
                                 ),
-                                TextField(
-                                  controller: codigoController,
-                                  decoration:
-                                      const InputDecoration(labelText: 'Código da turma'),
-                                ),
-                                DropdownButtonFormField<String>(
-                                  value: _selectedArea,
-                                  onChanged: (value) {
-                                  },
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'MATEMÁTICA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.calculate),
-                                          SizedBox(width: 10),
-                                          Text('MATEMÁTICA'),
-                                        ],
-                                      ),
+                                    TextField(
+                                      controller: codigoController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Código do Curso'),
                                     ),
-                                    DropdownMenuItem(
-                                      value: 'CIÊNCIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.science),
-                                          SizedBox(width: 10),
-                                          Text('CIÊNCIA'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'HISTÓRIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.history_edu),
-                                          SizedBox(width: 10),
-                                          Text('HISTÓRIA'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'LINGUAGENS',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.language),
-                                          SizedBox(width: 10),
-                                          Text('LINGUAGENS'),
-                                        ],
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'TECNOLOGIA',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.computer),
-                                          SizedBox(width: 10),
-                                          Text('TECNOLOGIA'),
-                                        ],
-                                      ),
+                                    DropdownButtonFormField<String>(
+                                      value: _selectedArea,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedArea = value;
+                                        });
+                                      },
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'MATEMÁTICA',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.calculate),
+                                              SizedBox(width: 10),
+                                              Text('MATEMÁTICA'),
+                                            ],
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'CIÊNCIA',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.science),
+                                              SizedBox(width: 10),
+                                              Text('CIÊNCIA'),
+                                            ],
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'HISTÓRIA',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.history_edu),
+                                              SizedBox(width: 10),
+                                              Text('HISTÓRIA'),
+                                            ],
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'LINGUAGENS',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.language),
+                                              SizedBox(width: 10),
+                                              Text('LINGUAGENS'),
+                                            ],
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'TECNOLOGIA',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.computer),
+                                              SizedBox(width: 10),
+                                              Text('TECNOLOGIA'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                      decoration: const InputDecoration(
+                                          labelText: 'Área de Conhecimento'),
                                     ),
                                   ],
-                                  decoration: const InputDecoration(
-                                      labelText: 'Área de Conhecimento'),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                           actions: [
                             TextButton(
@@ -250,7 +408,12 @@ class _ClassPageState extends State<ClassPage> {
                   },
                   child: const Icon(Icons.add),
                 )
-              : const SizedBox(),
+              : FloatingActionButton(
+                  backgroundColor: const Color(0xFF4B9460),
+                  foregroundColor: Colors.white,
+                  onPressed: _adicionarChat,
+                  child: const Icon(Icons.chat),
+                ),
         );
       },
     );
@@ -284,7 +447,7 @@ class _ClassPageState extends State<ClassPage> {
   }
 
   void _salvarCurso(BuildContext context) async {
-    if (nomeController.text.trim().isEmpty ||
+    if ((isAddingNewCourse && nomeController.text.trim().isEmpty) ||
         _selectedSemester == null ||
         codigoController.text.trim().isEmpty ||
         _selectedArea == null) {
@@ -296,11 +459,11 @@ class _ClassPageState extends State<ClassPage> {
       return;
     }
 
-    // Normalizar os campos para maiúsculas
-    final nome = nomeController.text.trim().toUpperCase();
+    final nome = isAddingNewCourse
+        ? nomeController.text.trim().toUpperCase()
+        : _selectedCurso!.toUpperCase();
     final codigo = codigoController.text.trim().toUpperCase();
 
-    // Verificar se o código do curso já existe
     final cursosSnapshot = await FirebaseFirestore.instance
         .collection('salas-participantes')
         .where('codigo', isEqualTo: codigo)
@@ -318,7 +481,6 @@ class _ClassPageState extends State<ClassPage> {
     try {
       final user = FirebaseAuth.instance.currentUser!;
       final email = [user.email];
-      // final admin = [user.usuario];
 
       await FirebaseFirestore.instance.collection('salas-participantes').add({
         'nome': nome,
@@ -333,14 +495,16 @@ class _ClassPageState extends State<ClassPage> {
           content: Text('Curso cadastrado com sucesso!'),
         ),
       );
-      // Limpar os controladores após o cadastro
+
       nomeController.clear();
       setState(() {
         _selectedSemester = null;
         _selectedArea = null;
+        isAddingNewCourse = false;
+        _selectedCurso = null;
       });
       codigoController.clear();
-      Navigator.of(context).pop(); // Fechar o modal após o cadastro
+      Navigator.of(context).pop();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -352,7 +516,7 @@ class _ClassPageState extends State<ClassPage> {
 }
 
 void main() {
-  runApp( const MaterialApp(
+  runApp(const MaterialApp(
     home: ClassPage(),
   ));
 }
