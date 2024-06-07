@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'profile_page.dart';
+import 'settings_page.dart';
+
 final _firebaseAuth = FirebaseAuth.instance;
 
 class ClassPage extends StatefulWidget {
@@ -20,7 +23,6 @@ class _ClassPageState extends State<ClassPage> {
   final TextEditingController codigoController = TextEditingController();
   String? _selectedTipoCurso;
   String? _selectedModalidade;
-  bool isAdmin = false;
   bool isProfessor = false;
   bool isCoordenador = false;
 
@@ -46,7 +48,6 @@ class _ClassPageState extends State<ClassPage> {
       if (usuarioDoc.docs.isNotEmpty) {
         final dadosUsuario = usuarioDoc.docs.first.data();
         setState(() {
-          isAdmin = dadosUsuario['isAdmin'] ?? false;
           isProfessor = dadosUsuario['isProfessor'] ?? false;
           isCoordenador = dadosUsuario['isCoordenador'] ?? false;
         });
@@ -55,12 +56,14 @@ class _ClassPageState extends State<ClassPage> {
   }
 
   Future<void> _carregarCursos() async {
-    final cursosSnapshot =
-        await FirebaseFirestore.instance.collection('salas-participantes').get();
+    final cursosSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .get();
     setState(() {
       cursos = cursosSnapshot.docs.map((doc) => doc['nome'] as String).toList();
       cursos.sort(); // Ordenar os cursos em ordem alfabética
-      cursos.insert(0, "Adicionar nova turma"); // Adicionar a opção "Adicionar nova turma" no início da lista
+      cursos.insert(0,
+          "Adicionar nova turma"); // Adicionar a opção "Adicionar nova turma" no início da lista
     });
   }
 
@@ -100,11 +103,13 @@ class _ClassPageState extends State<ClassPage> {
                       child: Text(curso),
                     );
                   }).toList(),
-                  decoration: const InputDecoration(labelText: 'Selecione a Turma'),
+                  decoration:
+                      const InputDecoration(labelText: 'Selecione a Turma'),
                 ),
                 TextField(
                   controller: codigoController,
-                  decoration: const InputDecoration(labelText: 'Código da Turma'),
+                  decoration:
+                      const InputDecoration(labelText: 'Código da Turma'),
                 ),
               ],
             ),
@@ -191,12 +196,13 @@ class _ClassPageState extends State<ClassPage> {
         configuraNotificacoes(salasCarregadas, usuarioAutenticado);
 
         return Scaffold(
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          // backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
             backgroundColor: const Color(0xFF4B9460),
-            title: const Text(
-              'Chats',
-              style: TextStyle(color: Colors.white),
+            title: SizedBox(
+              width: 100,
+              height: 50,
+              child: Image.asset('assets/images/logounicvbranco.png'),
             ),
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
@@ -209,6 +215,45 @@ class _ClassPageState extends State<ClassPage> {
                   );
                 },
                 icon: const Icon(Icons.exit_to_app),
+              ),
+              PopupMenuButton<String>(
+                offset: const Offset(0, 40),
+                onSelected: (value) {
+                  if (value == 'profile') {
+                    // Navegue para a página de perfil
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfilePage()),
+                    );
+                  } else if (value == 'settings') {
+                    // Navegue para a página de configurações
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsPage()),
+                    );
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    const PopupMenuItem<String>(
+                      value: 'profile',
+                      child: ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text('Perfil'),
+                      ),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'settings',
+                      child: ListTile(
+                        leading: Icon(Icons.settings),
+                        title: Text('Configuração'),
+                      ),
+                    ),
+                  ];
+                },
+                icon: const Icon(Icons.more_vert),
               ),
             ],
           ),
@@ -229,18 +274,23 @@ class _ClassPageState extends State<ClassPage> {
                         return FutureBuilder(
                           future: FirebaseFirestore.instance
                               .collection('salas-participantes')
-                              .doc(sala.id) // Utilizamos o ID da sala para recuperar os dados do curso
+                              .doc(sala
+                                  .id) // Utilizamos o ID da sala para recuperar os dados do curso
                               .get(),
                           builder: (context, cursoSnapshot) {
-                            if (cursoSnapshot.connectionState == ConnectionState.waiting) {
+                            if (cursoSnapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             }
                             if (cursoSnapshot.hasError) {
-                              return Text('Erro ao carregar turma: ${cursoSnapshot.error}');
+                              return Text(
+                                  'Erro ao carregar turma: ${cursoSnapshot.error}');
                             }
-                            final cursoData = cursoSnapshot.data!.data() as Map<String, dynamic>;
+                            final cursoData = cursoSnapshot.data!.data()
+                                as Map<String, dynamic>;
                             return ListTile(
-                              leading: _buildIconForType(cursoData['tipoCurso']),
+                              leading:
+                                  _buildIconForType(cursoData['tipoCurso']),
                               contentPadding: const EdgeInsets.all(8),
                               title: Text(cursoData['nome']),
                               subtitle: Text(
@@ -249,8 +299,9 @@ class _ClassPageState extends State<ClassPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChatPage(chatId: sala.id, curso: cursoData['nome']),
+                                    builder: (context) => ChatPage(
+                                        chatId: sala.id,
+                                        curso: cursoData['nome']),
                                   ),
                                 );
                               },
@@ -275,7 +326,8 @@ class _ClassPageState extends State<ClassPage> {
                         return AlertDialog(
                           title: const Text('Cadastrar Turma'),
                           content: StatefulBuilder(
-                            builder: (BuildContext context, StateSetter setState) {
+                            builder:
+                                (BuildContext context, StateSetter setState) {
                               return SingleChildScrollView(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -285,7 +337,8 @@ class _ClassPageState extends State<ClassPage> {
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedCurso = value;
-                                          isAddingNewCourse = value == "Adicionar nova turma";
+                                          isAddingNewCourse =
+                                              value == "Adicionar nova turma";
                                         });
                                       },
                                       items: cursos.map((curso) {
@@ -295,7 +348,8 @@ class _ClassPageState extends State<ClassPage> {
                                         );
                                       }).toList(),
                                       decoration: const InputDecoration(
-                                          labelText: 'Selecione ou adicione uma turma'),
+                                          labelText:
+                                              'Selecione ou adicione uma turma'),
                                     ),
                                     if (isAddingNewCourse)
                                       TextField(
@@ -310,13 +364,16 @@ class _ClassPageState extends State<ClassPage> {
                                           _selectedSemester = value;
                                         });
                                       },
-                                      items: List.generate(12, (index) => index + 1)
-                                          .map((semester) => DropdownMenuItem<int>(
+                                      items: List.generate(
+                                              12, (index) => index + 1)
+                                          .map((semester) =>
+                                              DropdownMenuItem<int>(
                                                 value: semester,
                                                 child: Text('$semester°'),
                                               ))
                                           .toList(),
-                                      decoration: const InputDecoration(labelText: 'Semestre'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Semestre'),
                                     ),
                                     TextField(
                                       controller: codigoController,

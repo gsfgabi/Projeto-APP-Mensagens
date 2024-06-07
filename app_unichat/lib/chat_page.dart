@@ -10,7 +10,8 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({Key? key, required this.chatId, required this.curso}) : super(key: key);
+  const ChatPage({Key? key, required this.chatId, required this.curso})
+      : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -36,7 +37,10 @@ class _ChatPageState extends State<ChatPage> {
 
       if (docSnapshot.exists) {
         final dadosUsuario = docSnapshot.data();
-        if (dadosUsuario != null && (dadosUsuario['isAdmin'] == true || dadosUsuario['isProfessor'] == true || dadosUsuario['isCoordenador'] == true)) {
+        if (dadosUsuario != null &&
+            (dadosUsuario['isAdmin'] == true ||
+                dadosUsuario['isProfessor'] == true ||
+                dadosUsuario['isCoordenador'] == true)) {
           setState(() {
             _podeEnviarMensagem = true;
           });
@@ -101,7 +105,8 @@ class _ChatPageState extends State<ChatPage> {
                         hintText: 'Digite uma mensagem...',
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF4B9460), width: 1.0),
+                          borderSide:
+                              BorderSide(color: Color(0xFF4B9460), width: 1.0),
                         ),
                       ),
                     ),
