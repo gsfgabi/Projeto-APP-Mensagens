@@ -10,4 +10,17 @@ class AppController extends ValueNotifier<bool> {
   void changeTheme() {
     value = !value;
   }
+
+  void setThemeMode(ThemeMode themeMode) {
+    switch (themeMode) {
+      case ThemeMode.light:
+        value = false; 
+        break;
+      case ThemeMode.dark:
+        value = true; 
+        break;
+      case ThemeMode.system:
+        break;
+    }
+  }
 }
