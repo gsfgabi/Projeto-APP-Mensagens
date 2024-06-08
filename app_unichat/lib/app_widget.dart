@@ -9,48 +9,49 @@ import 'register_coordinator.dart';
 import 'forgot_password_page.dart';
 import 'chat_page.dart';
 
-class AppWidget extends StatefulWidget {
-  const AppWidget({Key? key}) : super(key: key);
+// import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
 
-  @override
-  _AppWidgetState createState() => _AppWidgetState();
-}
+class AppWidget extends StatelessWidget {
+  const AppWidget({super.key});
 
-class _AppWidgetState extends State<AppWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: AppController.instance,
-      builder: (context, isDarkTheme, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: isDarkTheme ? ThemeData.dark() : ThemeData.light(),
-          initialRoute: '/',
-          routes: {
-            '/login': (context) => const LoginPage(),
-            '/turma': (context) => const ClassPage(),
-            '/RegisterStudent': (context) => const RegisterStudent(),
-            '/RegisterTeacher': (context) => const RegisterTeacher(),
-            '/RegisterCoordinator': (context) => const RegisterCoodinator(),
-            '/esqueciSenha': (context) => const ForgotPasswordPage(),
-            '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
-          },
-          home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasData) {
-                return const ClassPage();
-              }
-              return const LoginPage();
+        valueListenable: AppController.instance,
+        builder: (context, value, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              brightness: value ? Brightness.dark : Brightness.light,
+            ),
+            initialRoute: '/',
+            routes: {
+              '/login': (context) => const LoginPage(),
+              '/turma': (context) => const ClassPage(),
+              '/RegisterStudent': (context) => const RegisterStudent(),
+              '/RegisterTeacher': (context) => const RegisterTeacher(),
+              '/RegisterCoodinator': (context) => const RegisterCoodinator(),
+              '/esqueciSenha': (context) => const ForgotPasswordPage(),
+              '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
             },
-          ),
-        );
-      },
-    );
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasData) {
+                  return const ClassPage();
+                }
+                return const LoginPage();
+              },
+            ),
+          );
+        });
   }
 }
