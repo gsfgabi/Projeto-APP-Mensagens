@@ -124,8 +124,8 @@ class _LoginPageState extends State<LoginPage> {
                                 try {
                                   if (_email.toLowerCase() == 'admincoordenador@unicv.edu.br' &&
                                     _senha.toLowerCase() == '123456') {
-                                    // Redireciona para a criação de uma conta como professor
-                                    Navigator.of(context).pushReplacementNamed('/RegisterCoodinator');
+                                    // Redireciona para a criação de uma conta como coordenador
+                                    Navigator.of(context).pushReplacementNamed('/RegisterCoordinator');
                                   } else if (_email.toLowerCase() == 'adminprofessor@unicv.edu.br' &&
                                     _senha.toLowerCase() == '123456') {
                                     // Redireciona para a criação de uma conta como professor
