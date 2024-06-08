@@ -1,209 +1,218 @@
-//import 'home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
-class RegisterCoodinator extends StatefulWidget {
-  const RegisterCoodinator({super.key});
+class RegisterCoordinator extends StatefulWidget {
+  const RegisterCoordinator({Key? key}) : super(key: key);
 
   @override
-  State<RegisterCoodinator> createState() => _RegisterCoodinatorState();
+  State<RegisterCoordinator> createState() => _RegisterCoordinatorState();
 }
 
-class _RegisterCoodinatorState extends State<RegisterCoodinator> {
-  String nomecompleto = '';
+class _RegisterCoordinatorState extends State<RegisterCoordinator> {
+  String nomeCompleto = '';
   String email = '';
   String senha = '';
-  final _chaveForm = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            width: 300,
-            height: 100,
-            child: Image.asset('assets/images/logo.png'),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Form(
-              key: _chaveForm,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Cadastro do Coordenador',
-                    style: TextStyle(
-                      fontSize: 30.0,
-                    ),
-                  ),
-                  Container(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      onChanged: (text) {
-                        nomecompleto = text;
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Nome Completo',
-                        border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              width: 300,
+              height: 100,
+              child: Image.asset('assets/images/logo.png'),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Cadastro do Coordenador',
+                      style: TextStyle(
+                        fontSize: 30.0,
                       ),
-                      validator: (valor) {
-                        if (valor == null ||
-                            valor.trim().isEmpty ) {
-                          return 'Por favor, insira um nome válido!';
-                        }
-                        return null;
-                      },
-                      onSaved: (valorDigitado) {
-                        if (valorDigitado != null) {
-                          nomecompleto = valorDigitado;
-                        }
-                      },
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      onChanged: (text) {
-                        email = text;
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (valor) {
-                        if (valor == null ||
-                            valor.trim().isEmpty ||
-                            !valor.contains('@unicv.edu.br')) {
-                          return 'Por favor, insira um endereço de email válido!';
-                        }
-                        return null;
-                      },
-                      onSaved: (valorDigitado) {
-                        if (valorDigitado != null) {
-                          email = valorDigitado;
-                        }
-                      },
+                    Container(
+                      height: 20,
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      onChanged: (text) {
-                        senha = text;
-                      },
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Senha',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (valor) {
-                        if (valor == null || valor.trim().length < 6) {
-                          return 'A senha deve ter pelo menos 6 caracteres.';
-                        }
-                        return null;
-                      },
-                      onSaved: (valor) {
-                        if (valor != null) {
-                          senha = valor;
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4B9460)
-                        // Text Color (Foreground color)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: TextFormField(
+                        onChanged: (text) {
+                          setState(() {
+                            nomeCompleto = text.toUpperCase(); // Convertendo para maiúsculas
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Nome Completo',
+                          border: OutlineInputBorder(),
                         ),
-                    child: const Text(
-                      'Cadastrar',
-                      style: TextStyle(color: Colors.white),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Por favor, insira um nome válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            nomeCompleto = value.toUpperCase(); // Convertendo para maiúsculas
+                          }
+                        },
+                      ),
                     ),
-                    onPressed: () async {
-                      if (!_chaveForm.currentState!.validate()) {
-                        return;
-                      }
-                      _chaveForm.currentState!.save();
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: TextFormField(
+                        onChanged: (text) {
+                          email = text;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              !value.contains('@unicv.edu.br')) {
+                            return 'Por favor, insira um endereço de email válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            email = value;
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: TextFormField(
+                        onChanged: (text) {
+                          senha = text;
+                        },
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Senha',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().length < 6) {
+                            return 'A senha deve ter pelo menos 6 caracteres.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            senha = value;
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4B9460),
+                      ),
+                      onPressed: () async {
+                        if (!_formKey.currentState!.validate()) {
+                          return;
+                        }
+                        _formKey.currentState!.save();
 
-                      if (email == email && senha == senha) {
                         try {
                           // Verifica se o email e a senha foram fornecidos
                           if (email.isNotEmpty && senha.isNotEmpty) {
                             // Verifica se o email é válido
                             if (email.contains('@unicv.edu.br')) {
-                              // Se todas as condições forem atendidas, redireciona para a tela de chat
-                              final credenciaisUsuario =
-                                            await _firebaseAuth
-                                                .createUserWithEmailAndPassword(
-                                                    email: email,
-                                                    password: senha);
+                              // Cadastra o usuário no banco de dados
+                              final credentials =
+                                  await _firebaseAuth.createUserWithEmailAndPassword(
+                                email: email,
+                                password: senha,
+                              );
 
-                                                  await FirebaseFirestore.instance.collection('usuarios').doc(credenciaisUsuario.user!.uid).set({
-                                                    'email' : email,
-                                                    // 'isAdmin': true,
-                                                    'isProfessor': false,
-                                                    'isCoordenador': true,
-                                                    'usuario': nomecompleto,
-                                                  });
-                              Navigator.of(context).pushReplacementNamed('/login');
+                              // Salva os dados do coordenador no Firestore
+                              await FirebaseFirestore.instance
+                                  .collection('coordenadores')
+                                  .doc(credentials.user!.uid)
+                                  .set({
+                                'email': email,
+                                'nomeCompleto': nomeCompleto, // Salvando o nome em maiúsculas
+                              });
+
+                              // Exibe a notificação de cadastro realizado com sucesso
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Cadastro realizado com sucesso!'),
+                                ),
+                              );
+
+                              // Redireciona para a tela de login após o cadastro
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/login');
                             }
-                          }else {
+                          } else {
                             // Exibe uma mensagem de erro se o email ou senha estiverem vazios
                             print('Por favor, insira seu email e senha!');
                           }
                         } on FirebaseAuthException catch (error) {
-                          String mensagem =
+                          // Trata erros de autenticação
+                          String message =
                               'Falha no cadastro de novo coordenador';
-                          if (error.code ==
-                              'email-already-in-use') {
-                            mensagem = 'Email já utilizado';
+                          if (error.code == 'email-already-in-use') {
+                            message = 'Email já utilizado';
                           }
-                          ScaffoldMessenger.of(context)
-                              .clearSnackBars();
-                          ScaffoldMessenger.of(context)
-                            .showSnackBar(
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(mensagem),
+                              content: Text(message),
                             ),
                           );
                         }
-                        // Navigator.of(context).pushReplacementNamed('/RegisterCoodinator');
-                      
-                      } else {
-                        print('Login Invalido');
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  TextButton(
-                    onPressed: () {
-                      // Retornar à tela de login
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    },
-                    child: const Text(
-                      'Já possui uma conta? Faça login',
-                      style: TextStyle(color: Colors.blue),
+                      },
+                      child: const Text(
+                        'Cadastrar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 15),
+                    TextButton(
+                      onPressed: () {
+                        // Redireciona para a tela de login
+                        Navigator.of(context).pushReplacementNamed('/login');
+                      },
+                      child: const Text(
+                        'Já possui uma conta? Faça login',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: RegisterCoordinator(),
+  ));
 }

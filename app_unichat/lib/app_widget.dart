@@ -33,7 +33,7 @@ class AppWidget extends StatelessWidget {
               '/turma': (context) => const ClassPage(),
               '/RegisterStudent': (context) => const RegisterStudent(),
               '/RegisterTeacher': (context) => const RegisterTeacher(),
-              '/RegisterCoodinator': (context) => const RegisterCoodinator(),
+              '/RegisterCoodinator': (context) => const RegisterCoordinator(),
               '/esqueciSenha': (context) => const ForgotPasswordPage(),
               '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
             },
