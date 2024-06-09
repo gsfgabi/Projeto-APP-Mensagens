@@ -150,6 +150,8 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                                   .set({
                                 'email': email,
                                 'nomeCompleto': nomeCompleto.toUpperCase(), // Salvando o nome em maiúsculas
+                                'isProfessor': true,
+                                'isCoordenador': false,
                               });
 
                               // Exibe a notificação de cadastro feito com sucesso
