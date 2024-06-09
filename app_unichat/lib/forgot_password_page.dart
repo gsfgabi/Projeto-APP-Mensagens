@@ -1,18 +1,43 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
+final _firebaseAuth = FirebaseAuth.instance;
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
 
-  ForgotPasswordPage({super.key});
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController emailController = TextEditingController();
+  String email = '';
 
   void _resetPassword(BuildContext context) async {
     try{
-      await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: emailController.text,
+      if (email.contains('unicv.edu.br')) {
+        await _firebaseAuth.sendPasswordResetEmail(
+          email: emailController.text,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email enviado com sucesso! Verifique sua cx de entrada.'),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (error) {
+      String message = 'Falha na redefinição de senha';
+      if (error.code == 'user-not-found') {
+        message = 'Email não cadastrado.';
+      }
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
       );
-    } catch (e) {
-      print("Error: $e");
     }
   }
 
@@ -58,7 +83,13 @@ class ForgotPasswordPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               TextFormField(
+                onChanged: (text) {
+                  email = text;
+                },
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                textCapitalization: TextCapitalization.none,
                 decoration: const InputDecoration(
                   labelText: "Email",
                   labelStyle: TextStyle(
@@ -67,6 +98,14 @@ class ForgotPasswordPage extends StatelessWidget {
                     fontSize: 20,
                   ),
                 ),
+                validator: (valor) {
+                  if (valor == null ||
+                      valor.trim().isEmpty ||
+                      !valor.contains('unicv.edu.br')) {
+                    return 'Por favor, insira um endereço de email válido!';
+                  }
+                  return null;
+                },
                 style: const TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 20,),
