@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterCoordinator extends StatefulWidget {
-  const RegisterCoordinator({Key? key}) : super(key: key);
+  const RegisterCoordinator({super.key});
 
   @override
   State<RegisterCoordinator> createState() => _RegisterCoordinatorState();
@@ -85,7 +85,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                         validator: (value) {
                           if (value == null ||
                               value.trim().isEmpty ||
-                              !value.contains('@unicv.edu.br')) {
+                              !value.contains('unicv.edu.br')) {
                             return 'Por favor, insira um endereço de email válido!';
                           }
                           return null;
@@ -137,7 +137,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                           // Verifica se o email e a senha foram fornecidos
                           if (email.isNotEmpty && senha.isNotEmpty) {
                             // Verifica se o email é válido
-                            if (email.contains('@unicv.edu.br')) {
+                            if (email.contains('unicv.edu.br')) {
                               // Cadastra o usuário no banco de dados
                               final credentials =
                                   await _firebaseAuth.createUserWithEmailAndPassword(
@@ -147,7 +147,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
 
                               // Salva os dados do coordenador no Firestore
                               await FirebaseFirestore.instance
-                                  .collection('coordenadores')
+                                  .collection('usuarios')
                                   .doc(credentials.user!.uid)
                                   .set({
                                 'email': email,
@@ -212,7 +212,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp( const MaterialApp(
     home: RegisterCoordinator(),
   ));
 }
