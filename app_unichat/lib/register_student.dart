@@ -85,7 +85,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         validator: (valor) {
                           if (valor == null ||
                               valor.trim().isEmpty ||
-                              !valor.contains('@unicv.edu.br')) {
+                              !valor.contains('unicv.edu.br')) {
                             return 'Por favor, insira um endereço de email válido!';
                           }
                           return null;
@@ -268,43 +268,58 @@ class _RegisterStudentState extends State<RegisterStudent> {
   }
 
   Future<void> cadastrarUsuario() async {
-    if (email == 'admin' && senha == 'admin') {
-      Navigator.of(context).pushNamed('/RegisterTeacher');
-    } else {
-      if (email.isNotEmpty && senha.isNotEmpty) {
-        if (email.contains('@unicv.edu.br')) {
-          final credenciaisUsuario =
-              await _firebaseAuth.createUserWithEmailAndPassword(
-            email: email,
-            password: senha,
-          );
+    try {
+      if (email == 'admin' && senha == 'admin') {
+        Navigator.of(context).pushNamed('/RegisterTeacher');
+      } else {
+        if (email.isNotEmpty && senha.isNotEmpty) {
+          if (email.contains('unicv.edu.br')) {
+            final credenciaisUsuario =
+                await _firebaseAuth.createUserWithEmailAndPassword(
+              email: email,
+              password: senha,
+            );
 
-          await FirebaseFirestore.instance
-              .collection('usuarios')
-              .doc(credenciaisUsuario.user!.uid)
-              .set({
-            'email': email,
-            'isAdmin': false,
-            'isProfessor': false,
-            'isCoordenador': false,
-            'usuario': nomecompleto,
-          });
+            await FirebaseFirestore.instance
+                .collection('usuarios')
+                .doc(credenciaisUsuario.user!.uid)
+                .set({
+              'email': email,
+              'isAdmin': false,
+              'isProfessor': false,
+              'isCoordenador': false,
+              'usuario': nomecompleto,
+            });
 
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Cadastro realizado com sucesso!'),
+              ),
+            );
+
+            Navigator.of(context).pushReplacementNamed('/login');
+          }
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Cadastro realizado com sucesso!'),
+              content: Text('Por favor, insira seu email e senha!'),
             ),
           );
-
-          Navigator.of(context).pushReplacementNamed('/login');
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Por favor, insira seu email e senha!'),
-          ),
-        );
       }
+    } on FirebaseAuthException catch (error) {
+      // Trata erros de autenticação
+      String message =
+          'Falha no cadastro de novo coordenador';
+      if (error.code == 'email-already-in-use') {
+        message = 'Email já utilizado';
+      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
     }
   }
 

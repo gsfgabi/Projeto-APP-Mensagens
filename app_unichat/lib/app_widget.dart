@@ -33,8 +33,8 @@ class AppWidget extends StatelessWidget {
               '/turma': (context) => const ClassPage(),
               '/RegisterStudent': (context) => const RegisterStudent(),
               '/RegisterTeacher': (context) => const RegisterTeacher(),
-              '/RegisterCoodinator': (context) => const RegisterCoordinator(),
-              '/esqueciSenha': (context) => const ForgotPasswordPage(),
+              '/RegisterCoordinator': (context) => const RegisterCoordinator(),
+              '/esqueciSenha': (context) => ForgotPasswordPage(),
               '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
             },
             home: StreamBuilder(

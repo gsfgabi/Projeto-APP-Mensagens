@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterTeacher extends StatefulWidget {
-  const RegisterTeacher({Key? key});
+  const RegisterTeacher({super.key});
 
   @override
   State<RegisterTeacher> createState() => _RegisterTeacherState();
@@ -83,7 +83,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         validator: (value) {
                           if (value == null ||
                               value.trim().isEmpty ||
-                              !value.contains('@unicv.edu.br')) {
+                              !value.contains('unicv.edu.br')) {
                             return 'Por favor, insira um endereço de email válido!';
                           }
                           return null;
@@ -135,7 +135,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                           // Verifica se o email e a senha foram fornecidos
                           if (email.isNotEmpty && senha.isNotEmpty) {
                             // Verifica se o email é válido
-                            if (email.contains('@unicv.edu.br')) {
+                            if (email.contains('unicv.edu.br')) {
                               // Cadastra o usuário no banco de dados
                               final credentials =
                                   await _firebaseAuth.createUserWithEmailAndPassword(
@@ -145,7 +145,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
 
                               // Salva os dados do docente no Firestore
                               await FirebaseFirestore.instance
-                                  .collection('docentes')
+                                  .collection('usuarios')
                                   .doc(credentials.user!.uid)
                                   .set({
                                 'email': email,
