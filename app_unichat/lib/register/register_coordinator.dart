@@ -149,6 +149,8 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                           await FirebaseFirestore.instance.collection('usuarios').doc(credentials.user!.uid).set({
                             'email': email,
                             'nomeCompleto': nomeCompleto, // Salvando o nome em maiúsculas
+                            'isProfessor': false,
+                            'isCoordenador': true,
                           });
 
                           // Exibe a notificação de cadastro realizado com sucesso
