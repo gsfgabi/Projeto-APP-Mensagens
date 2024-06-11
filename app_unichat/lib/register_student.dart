@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:curso_flutter_flutterando/chat_page.dart';
-//import 'package:curso_flutter_flutterando/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -135,8 +133,8 @@ class _RegisterStudentState extends State<RegisterStudent> {
                           if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
                           } else {
-                            List<String> cursos = [];
-                            for (var doc in snapshot.data!.docs) {
+                            Set<String> cursos = {};
+                            snapshot.data!.docs.forEach((doc) {
                               var data = doc.data() as Map<String, dynamic>;
                               if (data.containsKey('nome')) {
                                 String? nomeCurso = data['nome'];
@@ -144,14 +142,18 @@ class _RegisterStudentState extends State<RegisterStudent> {
                                   cursos.add(nomeCurso);
                                 }
                               }
-                            }
+                            });
+
+                            List<String> cursosList = cursos.toList();
+                            cursosList.sort(); // Ordenando cursos em ordem crescente
+
                             return DropdownButtonFormField<String>(
                               value: selecionarcurso,
                               decoration: const InputDecoration(
                                 labelText: 'Selecionar Curso',
                                 border: OutlineInputBorder(),
                               ),
-                              items: cursos.map((String value) {
+                              items: cursosList.map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
