@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterStudent extends StatefulWidget {
-  const RegisterStudent({super.key});
+  const RegisterStudent({Key? key}) : super(key: key);
 
   @override
   State<RegisterStudent> createState() => _RegisterStudentState();
@@ -204,7 +204,16 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         if (!_chaveForm.currentState!.validate()) {
                           return;
                         }
-                        _chaveForm.currentState!.save();
+
+                        // Verificar se o curso e o código da turma foram selecionados
+                        if (selecionarcurso == null || selecionarcurso!.isEmpty || codigoturma.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Por favor, selecione um curso e insira o código da turma!'),
+                            ),
+                          );
+                          return;
+                        }
 
                         // Verificar se o código da turma é válido
                         bool isTurmaValida = await verificarCodigoTurma();
@@ -281,10 +290,20 @@ class _RegisterStudentState extends State<RegisterStudent> {
             'usuario': nomecompleto,
           });
 
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cadastro realizado com sucesso!'),
+            ),
+          );
+
           Navigator.of(context).pushReplacementNamed('/turma');
         }
       } else {
-        print('Por favor, insira seu email e senha!');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor, insira seu email e senha!'),
+          ),
+        );
       }
     }
   }
