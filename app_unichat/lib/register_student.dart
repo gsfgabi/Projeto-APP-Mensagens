@@ -296,7 +296,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
             ),
           );
 
-          Navigator.of(context).pushReplacementNamed('/turma');
+          Navigator.of(context).pushReplacementNamed('/login');
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

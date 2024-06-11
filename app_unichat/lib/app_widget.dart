@@ -31,7 +31,7 @@ class _AppWidgetState extends State<AppWidget> {
             '/turma': (context) => const ClassPage(),
             '/RegisterStudent': (context) => const RegisterStudent(),
             '/RegisterTeacher': (context) => const RegisterTeacher(),
-            '/RegisterCoordinator': (context) => const RegisterCoodinator(),
+            '/RegisterCoordinator': (context) => const RegisterCoordinator(),
             '/esqueciSenha': (context) => const ForgotPasswordPage(),
             '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
           },
