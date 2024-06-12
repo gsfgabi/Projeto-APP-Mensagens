@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                               validator: (valor) {
                                 if (valor == null ||
                                     valor.trim().isEmpty ||
-                                    !valor.contains('@unicv.edu.br')) {
+                                    !valor.contains('unicv.edu.br')) {
                                   return 'Por favor, insira um endereço de email válido!';
                                 }
                                 return null;
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                                     // Verifica se o email e a senha foram fornecidos
                                     if (_email.isNotEmpty && _senha.isNotEmpty) {
                                       // Verifica se o email é válido
-                                      if (_email.contains('@unicv.edu.br')) {
+                                      if (_email.contains('unicv.edu.br')) {
                                         // Se todas as condições forem atendidas, redireciona para a tela de chat
                                         await _firebaseAuth
                                         .signInWithEmailAndPassword(
