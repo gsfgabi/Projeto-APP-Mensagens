@@ -193,7 +193,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                       },
                       child: const Text(
                         'Já possui uma conta? Faça login',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Color(0xFF4B9460)),
                       ),
                     ),
                   ],
@@ -205,10 +205,4 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: RegisterTeacher(),
-  ));
 }

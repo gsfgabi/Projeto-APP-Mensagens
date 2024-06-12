@@ -66,6 +66,8 @@ flutter:
     - assets/images/logounicvbranco.png
     - assets/images/background-unicv-min.webp
     - assets/images/ic_launcher.png
+    - assets/images/password.png
+    - assets/images/usuario.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
