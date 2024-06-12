@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curso_flutter_flutterando/chat_page.dart';
-import 'package:curso_flutter_flutterando/login_page.dart';
+import 'package:curso_flutter_flutterando/pages/chat_page.dart';
+import 'package:curso_flutter_flutterando/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
