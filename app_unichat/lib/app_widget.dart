@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'app_controller.dart';
-import 'class_page.dart';
-import 'login_page.dart';
-import 'register_student.dart';
-import 'register_teacher.dart';
-import 'register_coordinator.dart';
-import 'forgot_password_page.dart';
-import 'chat_page.dart';
+import 'widgets/app_controller.dart';
+import 'pages/class_page.dart';
+import 'pages/login_page.dart';
+import 'register/register_student.dart';
+import 'register/register_teacher.dart';
+import 'register/register_coordinator.dart';
+import 'password/forgot_password_page.dart';
+import 'pages/chat_page.dart';
 // ignore: unused_import
 import 'app_widget.dart';
 
