@@ -6,7 +6,7 @@ import 'pages/login_page.dart';
 import 'register/register_student.dart';
 import 'register/register_teacher.dart';
 import 'register/register_coordinator.dart';
-import 'password/forgot_password_page.dart';
+import 'pages/password/forgot_password_page.dart';
 import 'pages/chat_page.dart';
 // ignore: unused_import
 import 'app_widget.dart';
