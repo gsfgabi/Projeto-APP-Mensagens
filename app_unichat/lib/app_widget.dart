@@ -8,50 +8,50 @@ import 'register_teacher.dart';
 import 'register_coordinator.dart';
 import 'forgot_password_page.dart';
 import 'chat_page.dart';
-
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
+// ignore: unused_import
+import 'app_widget.dart';
 
 class AppWidget extends StatelessWidget {
-  const AppWidget({super.key});
+  const AppWidget({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: AppController.instance,
-        builder: (context, value, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              brightness: value ? Brightness.dark : Brightness.light,
-            ),
-            initialRoute: '/',
-            routes: {
-              '/login': (context) => const LoginPage(),
-              '/turma': (context) => const ClassPage(),
-              '/RegisterStudent': (context) => const RegisterStudent(),
-              '/RegisterTeacher': (context) => const RegisterTeacher(),
-              '/RegisterCoordinator': (context) => const RegisterCoordinator(),
-              '/esqueciSenha': (context) => ForgotPasswordPage(),
-              '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
+      valueListenable: AppController.instance,
+      builder: (context, value, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: const Color(0xFF4B9460),
+            primarySwatch: Colors.green, 
+            brightness: value ? Brightness.dark : Brightness.light,
+          ),
+          initialRoute: '/',
+          routes: {
+            '/login': (context) => const LoginPage(),
+            '/turma': (context) => const ClassPage(),
+            '/RegisterStudent': (context) => const RegisterStudent(),
+            '/RegisterTeacher': (context) => const RegisterTeacher(),
+            '/RegisterCoordinator': (context) => const RegisterCoordinator(),
+            '/esqueciSenha': (context) => const ForgotPasswordPage(),
+            '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
+          },
+          home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasData) {
+                return const ClassPage();
+              }
+              return const LoginPage();
             },
-            home: StreamBuilder(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (snapshot.hasData) {
-                  return const ClassPage();
-                }
-                return const LoginPage();
-              },
-            ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

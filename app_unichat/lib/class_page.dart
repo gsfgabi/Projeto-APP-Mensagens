@@ -55,29 +55,29 @@ class _ClassPageState extends State<ClassPage> {
     }
   }
 
-Future<void> _carregarCursos() async {
-  final cursosSnapshot = await FirebaseFirestore.instance
-      .collection('salas-participantes')
-      .get();
-  final List<String> cursosExistentes = [];
-  final Set<String> nomesCursos = {}; // Conjunto para garantir nomes de cursos únicos
+  Future<void> _carregarCursos() async {
+    final cursosSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .get();
+    final List<String> cursosExistentes = [];
+    final Set<String> nomesCursos =
+        {}; // Conjunto para garantir nomes de cursos únicos
 
-  cursosSnapshot.docs.forEach((doc) {
-    final nomeCurso = doc['nome'] as String;
-    if (!nomesCursos.contains(nomeCurso)) {
-      cursosExistentes.add(nomeCurso);
-      nomesCursos.add(nomeCurso);
-    }
-  });
+    cursosSnapshot.docs.forEach((doc) {
+      final nomeCurso = doc['nome'] as String;
+      if (!nomesCursos.contains(nomeCurso)) {
+        cursosExistentes.add(nomeCurso);
+        nomesCursos.add(nomeCurso);
+      }
+    });
 
-  setState(() {
-    cursos = cursosExistentes;
-    cursos.sort(); // Ordenar os cursos em ordem alfabética
-    cursos.insert(0,
-        "Adicionar nova turma"); // Adicionar a opção "Adicionar nova turma" no início da lista
-  });
-}
-
+    setState(() {
+      cursos = cursosExistentes;
+      cursos.sort(); // Ordenar os cursos em ordem alfabética
+      cursos.insert(0,
+          "Adicionar nova turma"); // Adicionar a opção "Adicionar nova turma" no início da lista
+    });
+  }
 
   void configuraNotificacoes(chatsCarregados, usuarioAutenticado) async {
     final firebaseMessageria = FirebaseMessaging.instance;
@@ -131,13 +131,19 @@ Future<void> _carregarCursos() async {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancelar'),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Color(0xFF4B9460)),
+              ),
             ),
             TextButton(
               onPressed: () {
                 _salvarChat(context);
               },
-              child: const Text('Adicionar'),
+              child: const Text(
+                'Adicionar',
+                style: TextStyle(color: Color(0xFF4B9460)),
+              ),
             ),
           ],
         );
@@ -525,101 +531,102 @@ Future<void> _carregarCursos() async {
     }
   }
 
-void _salvarCurso(BuildContext context) async {
-  if ((_selectedCurso == "Adicionar nova turma" && nomeController.text.trim().isEmpty) ||
-      _selectedSemester == null ||
-      codigoController.text.trim().isEmpty ||
-      _selectedTipoCurso == null ||
-      _selectedModalidade == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Preencha todos os campos antes de salvar'),
-      ),
-    );
-    return;
-  }
-
-  final nome = _selectedCurso == "Adicionar nova turma"
-      ? nomeController.text.trim().toUpperCase()
-      : _selectedCurso!.toUpperCase();
-  final codigo = codigoController.text.trim().toUpperCase();
-
-  // Verifica se o curso selecionado já existe na lista de cursos
-  if (_selectedCurso != "Adicionar nova turma" && !cursos.contains(nome)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('O curso selecionado não existe'),
-      ),
-    );
-    return;
-  }
-
-  // Verifica se já existe uma turma com o mesmo código
-  final cursosSnapshot = await FirebaseFirestore.instance
-      .collection('salas-participantes')
-      .where('codigo', isEqualTo: codigo)
-      .get();
-
-  if (cursosSnapshot.docs.isNotEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Já existe uma turma com o código informado'),
-      ),
-    );
-    return;
-  }
-
-  // Verifica se já existe uma turma com o mesmo nome, apenas se o curso selecionado for "Adicionar nova turma"
-  if (_selectedCurso == "Adicionar nova turma") {
-    final nomeCursoSnapshot = await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .where('nome', isEqualTo: nome)
-        .get();
-
-    if (nomeCursoSnapshot.docs.isNotEmpty) {
+  void _salvarCurso(BuildContext context) async {
+    if ((_selectedCurso == "Adicionar nova turma" &&
+            nomeController.text.trim().isEmpty) ||
+        _selectedSemester == null ||
+        codigoController.text.trim().isEmpty ||
+        _selectedTipoCurso == null ||
+        _selectedModalidade == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Já existe uma turma com o nome informado'),
+          content: Text('Preencha todos os campos antes de salvar'),
         ),
       );
       return;
     }
-  }
 
-  try {
-    final user = FirebaseAuth.instance.currentUser!;
-    final email = [user.email];
+    final nome = _selectedCurso == "Adicionar nova turma"
+        ? nomeController.text.trim().toUpperCase()
+        : _selectedCurso!.toUpperCase();
+    final codigo = codigoController.text.trim().toUpperCase();
 
-    await FirebaseFirestore.instance.collection('salas-participantes').add({
-      'nome': nome,
-      'semestre': _selectedSemester,
-      'codigo': codigo,
-      'tipoCurso': _selectedTipoCurso,
-      'modalidade': _selectedModalidade,
-      'email': email,
-    });
+    // Verifica se o curso selecionado já existe na lista de cursos
+    if (_selectedCurso != "Adicionar nova turma" && !cursos.contains(nome)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('O curso selecionado não existe'),
+        ),
+      );
+      return;
+    }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Turma cadastrada com sucesso!'),
-      ),
-    );
+    // Verifica se já existe uma turma com o mesmo código
+    final cursosSnapshot = await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .where('codigo', isEqualTo: codigo)
+        .get();
 
-    nomeController.clear();
-    setState(() {
-      _selectedSemester = null;
-      _selectedTipoCurso = null;
-      _selectedModalidade = null;
-      isAddingNewCourse = false;
-      _selectedCurso = null;
-    });
-    codigoController.clear();
-    Navigator.of(context).pop();
-    _carregarCursos(); // Recarregar a lista de cursos
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erro ao cadastrar a turma. Tente novamente.'),
+    if (cursosSnapshot.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Já existe uma turma com o código informado'),
+        ),
+      );
+      return;
+    }
+
+    // Verifica se já existe uma turma com o mesmo nome, apenas se o curso selecionado for "Adicionar nova turma"
+    if (_selectedCurso == "Adicionar nova turma") {
+      final nomeCursoSnapshot = await FirebaseFirestore.instance
+          .collection('salas-participantes')
+          .where('nome', isEqualTo: nome)
+          .get();
+
+      if (nomeCursoSnapshot.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Já existe uma turma com o nome informado'),
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final email = [user.email];
+
+      await FirebaseFirestore.instance.collection('salas-participantes').add({
+        'nome': nome,
+        'semestre': _selectedSemester,
+        'codigo': codigo,
+        'tipoCurso': _selectedTipoCurso,
+        'modalidade': _selectedModalidade,
+        'email': email,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Turma cadastrada com sucesso!'),
+        ),
+      );
+
+      nomeController.clear();
+      setState(() {
+        _selectedSemester = null;
+        _selectedTipoCurso = null;
+        _selectedModalidade = null;
+        isAddingNewCourse = false;
+        _selectedCurso = null;
+      });
+      codigoController.clear();
+      Navigator.of(context).pop();
+      _carregarCursos(); // Recarregar a lista de cursos
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao cadastrar a turma. Tente novamente.'),
         ),
       );
     }

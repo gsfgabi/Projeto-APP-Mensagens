@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class AppController extends ValueNotifier<bool> {
   static final AppController instance = AppController._internal();
 
