@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Importe a biblioteca intl para formatação de data e hora
+import '../widgets/app_controller.dart'; // Importe o AppController
 
 import 'mensagem.dart';
 
 class MensagensChat extends StatelessWidget {
   final String chatId;
-  const MensagensChat({super.key, required this.chatId});
+  const MensagensChat({Key? key, required this.chatId}) : super(key: key);
 
   Future<String> _buscarNomeUsuario(String emailUsuario) async {
     final querySnapshot = await FirebaseFirestore.instance
@@ -50,6 +51,7 @@ class MensagensChat extends StatelessWidget {
         }
 
         final mensagensCarregadas = snapshot.data!.docs;
+        final isDarkMode = AppController.instance.value;
 
         return Expanded(
           child: Padding(
@@ -63,7 +65,8 @@ class MensagensChat extends StatelessWidget {
                 final timestamp = mensagem['timestamp'];
 
                 // Formate a data e hora para o formato padrão brasileiro
-                final dataHoraFormatada = DateFormat('dd/MM/yyyy HH:mm').format((timestamp as Timestamp).toDate());
+                final dataHoraFormatada = DateFormat('dd/MM/yyyy HH:mm')
+                    .format((timestamp as Timestamp).toDate());
 
                 return FutureBuilder(
                   future: _buscarNomeUsuario(emailUsuario),
@@ -86,6 +89,9 @@ class MensagensChat extends StatelessWidget {
                       conteudoMensagem: conteudoMensagem,
                       nomeUsuario: nomeUsuario,
                       dataHora: dataHoraFormatada,
+                      corTexto: isDarkMode
+                          ? Colors.white
+                          : Colors.black, 
                     );
                   },
                 );

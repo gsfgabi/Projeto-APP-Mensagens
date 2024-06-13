@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login_page.dart';
 import '../widgets/mensagens_chat.dart';
+import '../widgets/app_controller.dart'; // Importe o AppController
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -75,18 +76,18 @@ class _ChatPageState extends State<ChatPage> {
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await _firebaseAuth.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-            icon: const Icon(Icons.exit_to_app),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await _firebaseAuth.signOut();
+        //       Navigator.pushReplacement(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const LoginPage()),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.exit_to_app),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -101,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
                   Expanded(
                     child: TextField(
                       controller: _mensagemController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Digite uma mensagem...',
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
