@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_controller.dart';
+import 'login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -23,6 +28,8 @@ class SettingsPage extends StatelessWidget {
           _buildThemeTile(context),
           const Divider(),
           _buildAboutTile(context),
+          const Divider(),
+          _buildExitTile(context),
         ],
       ),
     );
@@ -54,6 +61,20 @@ class SettingsPage extends StatelessWidget {
       title: const Text('Sobre'),
       onTap: () {
         // Lógica para a opção de Sobre
+      },
+    );
+  }
+
+  Widget _buildExitTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.exit_to_app, color: Color(0xFF4B9460)),
+      title: const Text('Sair'),
+      onTap: () async {
+        await _firebaseAuth.signOut();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       },
     );
   }
