@@ -232,6 +232,16 @@ class _ClassPageState extends State<ClassPage> {
             ),
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
+              IconButton(
+                onPressed: () async {
+                  await _firebaseAuth.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                icon: const Icon(Icons.exit_to_app),
+              ),
               PopupMenuButton<String>(
                 offset: const Offset(0, 40),
                 onSelected: (value) {

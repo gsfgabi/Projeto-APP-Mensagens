@@ -101,6 +101,7 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   Expanded(
                     child: TextField(
+                      keyboardType: TextInputType.multiline,
                       controller: _mensagemController,
                       decoration: InputDecoration(
                         hintText: 'Digite uma mensagem...',
