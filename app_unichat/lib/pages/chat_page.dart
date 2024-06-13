@@ -75,18 +75,18 @@ class _ChatPageState extends State<ChatPage> {
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await _firebaseAuth.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-            icon: const Icon(Icons.exit_to_app),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await _firebaseAuth.signOut();
+        //       Navigator.pushReplacement(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const LoginPage()),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.exit_to_app),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -100,6 +100,7 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   Expanded(
                     child: TextField(
+                      keyboardType: TextInputType.multiline,
                       controller: _mensagemController,
                       decoration: const InputDecoration(
                         hintText: 'Digite uma mensagem...',
