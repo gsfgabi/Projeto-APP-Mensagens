@@ -8,22 +8,20 @@ import 'register/register_teacher.dart';
 import 'register/register_coordinator.dart';
 import 'pages/password/forgot_password_page.dart';
 import 'pages/chat_page.dart';
-// ignore: unused_import
-import 'app_widget.dart';
 
 class AppWidget extends StatelessWidget {
-  const AppWidget({Key? key});
+  const AppWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<bool>(
       valueListenable: AppController.instance,
       builder: (context, value, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primaryColor: const Color(0xFF4B9460),
-            primarySwatch: Colors.green, 
+            primarySwatch: Colors.green,
             brightness: value ? Brightness.dark : Brightness.light,
           ),
           initialRoute: '/',
@@ -36,7 +34,7 @@ class AppWidget extends StatelessWidget {
             '/esqueciSenha': (context) => const ForgotPasswordPage(),
             '/conversa': (context) => const ChatPage(chatId: "", curso: ""),
           },
-          home: StreamBuilder(
+          home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

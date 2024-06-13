@@ -30,6 +30,14 @@ class _ClassPageState extends State<ClassPage> {
   String? _selectedCurso;
   bool isAddingNewCourse = false;
 
+  void _logout() async {
+    await _firebaseAuth.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -224,16 +232,6 @@ class _ClassPageState extends State<ClassPage> {
             ),
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
-              IconButton(
-                onPressed: () async {
-                  await _firebaseAuth.signOut();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                icon: const Icon(Icons.exit_to_app),
-              ),
               PopupMenuButton<String>(
                 offset: const Offset(0, 40),
                 onSelected: (value) {
@@ -251,6 +249,8 @@ class _ClassPageState extends State<ClassPage> {
                       MaterialPageRoute(
                           builder: (context) => const SettingsPage()),
                     );
+                  } else if (value == 'logout') {
+                    _logout();
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -267,6 +267,13 @@ class _ClassPageState extends State<ClassPage> {
                       child: ListTile(
                         leading: Icon(Icons.settings),
                         title: Text('Configuração'),
+                      ),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'logout',
+                      child: ListTile(
+                        leading: Icon(Icons.exit_to_app),
+                        title: Text('Sair'),
                       ),
                     ),
                   ];
@@ -482,13 +489,19 @@ class _ClassPageState extends State<ClassPage> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('Cancelar'),
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(color: Color(0xFF4B9460)),
+                              ),
                             ),
                             TextButton(
                               onPressed: () {
                                 _salvarCurso(context);
                               },
-                              child: const Text('Adicionar'),
+                              child: const Text(
+                                'Adicionar',
+                                style: TextStyle(color: Color(0xFF4B9460)),
+                              ),
                             ),
                           ],
                         );

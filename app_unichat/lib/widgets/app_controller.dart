@@ -1,27 +1,27 @@
-import 'package:flutter/material.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController extends ValueNotifier<bool> {
   static final AppController instance = AppController._internal();
+  static const String _themeKey = 'theme_preference';
 
-  AppController._internal() : super(false);
+  AppController._internal() : super(false) {
+    _loadThemeFromPrefs();
+  }
 
   bool get darkTheme => value;
 
-  void changeTheme() {
-    value = !value;
+  void setThemeMode(bool isDark) async {
+    value = isDark;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_themeKey, isDark);
   }
 
-  void setThemeMode(ThemeMode themeMode) {
-    switch (themeMode) {
-      case ThemeMode.light:
-        value = false; 
-        break;
-      case ThemeMode.dark:
-        value = true; 
-        break;
-      case ThemeMode.system:
-        break;
+  Future<void> _loadThemeFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isDark = prefs.getBool(_themeKey);
+    if (isDark != null) {
+      value = isDark;
     }
   }
 }
