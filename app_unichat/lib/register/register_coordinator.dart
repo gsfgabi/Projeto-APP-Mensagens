@@ -58,6 +58,11 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                     decoration: const InputDecoration(
                       labelText: 'Nome Completo',
                       border: OutlineInputBorder(),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF4B9460),
+                        ),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -83,6 +88,11 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                     decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF4B9460),
+                        ),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null ||
@@ -109,9 +119,6 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                     obscureText: _obscureText,
                     decoration: InputDecoration(
                     labelText: 'Senha',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFF4B9460),
-                    ),
                     border: const OutlineInputBorder(),
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
@@ -170,7 +177,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                           // Salva os dados do coordenador no Firestore
                           await FirebaseFirestore.instance.collection('usuarios').doc(credentials.user!.uid).set({
                             'email': email,
-                            'nomeCompleto': nomeCompleto, // Salvando o nome em maiúsculas
+                            'usuario': nomeCompleto, // Salvando o nome em maiúsculas
                             'isProfessor': false,
                             'isCoordenador': true,
                           });

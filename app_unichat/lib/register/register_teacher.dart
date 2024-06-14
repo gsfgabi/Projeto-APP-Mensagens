@@ -55,6 +55,11 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         decoration: const InputDecoration(
                           labelText: 'Nome Completo',
                           border: OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -80,6 +85,11 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null ||
@@ -106,9 +116,6 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         obscureText: _obscureText,
                     decoration: InputDecoration(
                     labelText: 'Senha',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFF4B9460),
-                    ),
                     border: const OutlineInputBorder(),
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
@@ -171,7 +178,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                                   .doc(credentials.user!.uid)
                                   .set({
                                 'email': email,
-                                'nomeCompleto': nomeCompleto.toUpperCase(), // Salvando o nome em maiúsculas
+                                'usuario': nomeCompleto.toUpperCase(), // Salvando o nome em maiúsculas
                                 'isProfessor': true,
                                 'isCoordenador': false,
                               });

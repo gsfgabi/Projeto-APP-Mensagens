@@ -110,6 +110,7 @@ class _ChatPageState extends State<ChatPage> {
                               BorderSide(color: Color(0xFF4B9460), width: 1.0),
                         ),
                       ),
+                      maxLines: 10,
                     ),
                   ),
                   IconButton(

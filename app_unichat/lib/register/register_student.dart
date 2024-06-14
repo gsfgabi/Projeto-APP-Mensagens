@@ -58,6 +58,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Nome Completo',
                     border: OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null || valor.trim().isEmpty) {
@@ -85,6 +90,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null ||
@@ -113,9 +123,6 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     obscureText: _obscureText,
                     decoration: InputDecoration(
                     labelText: 'Senha',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFF4B9460),
-                    ),
                     border: const OutlineInputBorder(),
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
@@ -179,6 +186,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         decoration: const InputDecoration(
                           labelText: 'Selecionar Curso',
                           border: OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
                         items: cursosList.map((String value) {
                           return DropdownMenuItem<String>(
@@ -214,6 +226,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Código da Turma',
                     border: OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null || valor.trim().isEmpty) {
