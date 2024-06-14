@@ -71,7 +71,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             const Padding(
               padding: EdgeInsets.all(15.0),
               child: Text(
-                "Digite o seu e-mail no campo abaixo.",
+                "Digite o seu e-mail vinculado a uma conta no campo abaixo.",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w400,

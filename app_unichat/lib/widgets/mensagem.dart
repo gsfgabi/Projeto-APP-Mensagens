@@ -4,12 +4,13 @@ class Mensagem extends StatelessWidget {
   final String conteudoMensagem;
   final String nomeUsuario;
   final String dataHora;
-
+  final Color corTexto; 
   const Mensagem({
     super.key,
     required this.conteudoMensagem,
     required this.nomeUsuario,
     required this.dataHora,
+    required this.corTexto,
   });
 
   @override
@@ -21,9 +22,9 @@ class Mensagem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
           child: Text(
             nomeUsuario,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: corTexto, 
             ),
           ),
         ),

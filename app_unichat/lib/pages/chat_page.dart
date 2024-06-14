@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login_page.dart';
+// import 'login_page.dart';
 import '../widgets/mensagens_chat.dart';
+// import '../widgets/app_controller.dart'; // Importe o AppController
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -10,8 +11,7 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({Key? key, required this.chatId, required this.curso})
-      : super(key: key);
+  const ChatPage({super.key, required this.chatId, required this.curso});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -75,18 +75,18 @@ class _ChatPageState extends State<ChatPage> {
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await _firebaseAuth.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-            icon: const Icon(Icons.exit_to_app),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await _firebaseAuth.signOut();
+        //       Navigator.pushReplacement(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const LoginPage()),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.exit_to_app),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [

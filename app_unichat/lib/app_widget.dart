@@ -8,11 +8,9 @@ import 'register/register_teacher.dart';
 import 'register/register_coordinator.dart';
 import 'pages/password/forgot_password_page.dart';
 import 'pages/chat_page.dart';
-// ignore: unused_import
-import 'app_widget.dart';
 
 class AppWidget extends StatelessWidget {
-  const AppWidget({Key? key});
+  const AppWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
