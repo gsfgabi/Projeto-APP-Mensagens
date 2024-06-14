@@ -87,11 +87,11 @@ class _ClassPageState extends State<ClassPage> {
     });
   }
 
-  void configuraNotificacoes(chatsCarregados, usuarioAutenticado) async {
+  void configuraNotificacoes(salasCarregadas, usuarioAutenticado) async {
     final firebaseMessageria = FirebaseMessaging.instance;
     await firebaseMessageria.requestPermission();
 
-    for (var documento in chatsCarregados) {
+    for (var documento in salasCarregadas) {
       for (var email in documento['email']) {
         if (email == usuarioAutenticado.email) {
           firebaseMessageria.subscribeToTopic(documento.id);
