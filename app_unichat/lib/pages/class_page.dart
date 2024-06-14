@@ -328,8 +328,9 @@ class _ClassPageState extends State<ClassPage> {
                                   _buildIconForType(cursoData['tipoCurso']),
                               contentPadding: const EdgeInsets.all(8),
                               title: Text(cursoData['nome']),
-                              subtitle: Text(
-                                  'Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']} - Modalidade: ${cursoData['modalidade']}'),
+                              subtitle: isCoordenador
+                                ? Text('Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']} - Modalidade: ${cursoData['modalidade']}')
+                                : Text('Semestre: ${cursoData['semestre']} - Modalidade: ${cursoData['modalidade']}'),
                               onTap: () {
                                 Navigator.push(
                                   context,
