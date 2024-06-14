@@ -15,6 +15,7 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
   String nomeCompleto = '';
   String email = '';
   String senha = '';
+  bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -105,11 +106,32 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                     onChanged: (text) {
                       senha = text;
                     },
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Senha',
-                      border: OutlineInputBorder(),
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                    labelText: 'Senha',
+                    labelStyle: const TextStyle(
+                      color: Color(0xFF4B9460),
                     ),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color:  const Color(0xFF4B9460),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
+                  ),
                     validator: (value) {
                       if (value == null || value.trim().length < 6) {
                         return 'A senha deve ter pelo menos 6 caracteres.';

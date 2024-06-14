@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterStudent extends StatefulWidget {
-  const RegisterStudent({Key? key}) : super(key: key);
+  const RegisterStudent({super.key});
 
   @override
   State<RegisterStudent> createState() => _RegisterStudentState();
@@ -17,6 +17,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
   String senha = '';
   String? selecionarcurso;
   String codigoturma = '';
+  bool _obscureText = true;
   final _chaveForm = GlobalKey<FormState>();
 
   @override
@@ -109,10 +110,31 @@ class _RegisterStudentState extends State<RegisterStudent> {
                       senha = text;
                     });
                   },
-                  obscureText: true,
-                  decoration: const InputDecoration(
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
                     labelText: 'Senha',
-                    border: OutlineInputBorder(),
+                    labelStyle: const TextStyle(
+                      color: Color(0xFF4B9460),
+                    ),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color:  const Color(0xFF4B9460),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null || valor.trim().length < 6) {
