@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                                                   email: _email,
                                                   password: _senha);
                                           Navigator.of(context)
-                                              .pushReplacementNamed('/turma');
+                                              .pushReplacementNamed('turma');
                                         }
                                       } else {
                                         // Exibe uma mensagem de erro se o email ou senha estiverem vazios
