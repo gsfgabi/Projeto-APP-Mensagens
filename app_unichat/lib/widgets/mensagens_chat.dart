@@ -91,7 +91,7 @@ class MensagensChat extends StatelessWidget {
                       dataHora: dataHoraFormatada,
                       corTexto: isDarkMode
                           ? Colors.white
-                          : Colors.black, 
+                          : Colors.white, 
                     );
                   },
                 );
