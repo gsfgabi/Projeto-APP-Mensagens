@@ -129,13 +129,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
 
   void selectImage() async {
-    Uint8List img = await pickImage(ImageSource.gallery);
-    setState(() {
-      _image = img;
-    });
+    Uint8List? img = await pickImage(ImageSource.gallery);
+    if (img != null) {
+      setState(() {
+        _image = img;
+      });
+    } else {
+      print("Nenhuma imagem selecionada");
+    }
   }
 
-  void saveProfile() async{
+  void saveProfile() async {
     await StoreData().saveData(file: _image!);
   }
 
@@ -201,9 +205,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 radius: 64,
                                 backgroundImage: MemoryImage(_image!),
                               )
-                            : const CircleAvatar(  
-                                radius: 50,
-                                backgroundImage: AssetImage('assets/images/usuario.jpg'),
+                            : const CircleAvatar(
+                                radius: 64,
+                                backgroundImage:
+                                    AssetImage('assets/images/usuario.jpg'),
                               ),
                         Positioned(
                           bottom: -10,
@@ -212,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: selectImage,
                             icon: const Icon(Icons.add_a_photo),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -257,7 +262,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: (){
+                    onPressed: () {
                       saveProfile;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -265,7 +270,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       );
                     },
-                    child: const Text('Save Profile'),
+                    child: const Text(
+                      'Salvar Perfil',
+                      style: TextStyle(color: Color(0xFF4B9460)),
+                    ),
                   )
                 ],
               ),

@@ -6,7 +6,6 @@ import '../widgets/app_controller.dart';
 
 // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -80,21 +79,9 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // Widget _buildExitTile(BuildContext context) {
-  //   return ListTile(
-  //     leading: const Icon(Icons.exit_to_app, color: Color(0xFF4B9460)),
-  //     title: const Text('Sair'),
-  //     onTap: () async {
-  //       await _firebaseAuth.signOut();
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const LoginPage()),
-  //       );
-  //     },
-  //   );
-  // }
-
   void _showThemeSelectionDialog(BuildContext context) {
+    ThemeMode? _tempSelectedTheme = _selectedTheme;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -108,30 +95,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   RadioListTile<ThemeMode>(
                     title: const Text('Claro'),
                     value: ThemeMode.light,
-                    groupValue: _selectedTheme,
+                    groupValue: _tempSelectedTheme,
                     onChanged: (ThemeMode? value) {
                       setState(() {
-                        _selectedTheme = value;
+                        _tempSelectedTheme = value;
                       });
-                      if (value != null) {
-                        AppController.instance
-                            .setThemeMode(value == ThemeMode.dark);
-                      }
                     },
                     activeColor: const Color(0xFF4B9460),
                   ),
                   RadioListTile<ThemeMode>(
                     title: const Text('Escuro'),
                     value: ThemeMode.dark,
-                    groupValue: _selectedTheme,
+                    groupValue: _tempSelectedTheme,
                     onChanged: (ThemeMode? value) {
                       setState(() {
-                        _selectedTheme = value;
+                        _tempSelectedTheme = value;
                       });
-                      if (value != null) {
-                        AppController.instance
-                            .setThemeMode(value == ThemeMode.dark);
-                      }
                     },
                     activeColor: const Color(0xFF4B9460),
                   ),
@@ -151,6 +130,13 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             TextButton(
               onPressed: () {
+                if (_tempSelectedTheme != null) {
+                  setState(() {
+                    _selectedTheme = _tempSelectedTheme!;
+                  });
+                  AppController.instance
+                      .setThemeMode(_tempSelectedTheme == ThemeMode.dark);
+                }
                 Navigator.of(context).pop();
               },
               child: const Text(

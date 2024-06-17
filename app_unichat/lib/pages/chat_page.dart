@@ -68,58 +68,69 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF4B9460),
-        title: Text(
-          widget.curso,
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () async {
-        //       await _firebaseAuth.signOut();
-        //       Navigator.pushReplacement(
-        //         context,
-        //         MaterialPageRoute(builder: (context) => const LoginPage()),
-        //       );
-        //     },
-        //     icon: const Icon(Icons.exit_to_app),
-        //   ),
-        // ],
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: MensagensChat(chatId: widget.chatId),
+          // Imagem de fundo
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.png',
+              fit: BoxFit.cover,
+            ),
           ),
-          if (_podeEnviarMensagem)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      // keyboardType: TextInputType.multiline,
-                      controller: _mensagemController,
-                      decoration: const InputDecoration(
-                        hintText: 'Digite uma mensagem...',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xFF4B9460), width: 1.0),
+          Column(
+            children: [
+              AppBar(
+                backgroundColor: const Color(0xFF4B9460),
+                title: Text(
+                  widget.curso,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                iconTheme: const IconThemeData(color: Colors.white),
+                // actions: [
+                //   IconButton(
+                //     onPressed: () async {
+                //       await _firebaseAuth.signOut();
+                //       Navigator.pushReplacement(
+                //         context,
+                //         MaterialPageRoute(builder: (context) => const LoginPage()),
+                //       );
+                //     },
+                //     icon: const Icon(Icons.exit_to_app),
+                //   ),
+                // ],
+              ),
+              Expanded(
+                child: MensagensChat(chatId: widget.chatId),
+              ),
+              if (_podeEnviarMensagem)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          // keyboardType: TextInputType.multiline,
+                          controller: _mensagemController,
+                          decoration: const InputDecoration(
+                            hintText: 'Digite uma mensagem...',
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0xFF4B9460), width: 1.0),
+                            ),
+                          ),
+                          maxLines: null,
                         ),
                       ),
-                      maxLines: null,
-                    ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: _enviarMensagem,
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _enviarMensagem,
-                  ),
-                ],
-              ),
-            ),
+                ),
+            ],
+          ),
         ],
       ),
     );
