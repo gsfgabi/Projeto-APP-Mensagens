@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importe a biblioteca intl para formatação de data e hora
-import '../widgets/app_controller.dart'; // Importe o AppController
-
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'mensagem.dart';
 
 class MensagensChat extends StatelessWidget {
@@ -24,6 +23,7 @@ class MensagensChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('salas-participantes')
@@ -51,7 +51,6 @@ class MensagensChat extends StatelessWidget {
         }
 
         final mensagensCarregadas = snapshot.data!.docs;
-        final isDarkMode = AppController.instance.value;
 
         return Expanded(
           child: Padding(
@@ -84,14 +83,13 @@ class MensagensChat extends StatelessWidget {
                     }
 
                     final nomeUsuario = snapshot.data ?? 'Usuário desconhecido';
+                    final isMe = currentUser?.email == emailUsuario;
 
                     return Mensagem(
                       conteudoMensagem: conteudoMensagem,
                       nomeUsuario: nomeUsuario,
                       dataHora: dataHoraFormatada,
-                      corTexto: isDarkMode
-                          ? Colors.white
-                          : Colors.white, 
+                      isMe: isMe,
                     );
                   },
                 );

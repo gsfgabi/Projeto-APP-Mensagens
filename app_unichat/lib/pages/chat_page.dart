@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'login_page.dart';
 import '../widgets/mensagens_chat.dart';
-// import '../widgets/app_controller.dart'; // Importe o AppController
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -86,18 +84,6 @@ class _ChatPageState extends State<ChatPage> {
                   style: const TextStyle(color: Colors.white),
                 ),
                 iconTheme: const IconThemeData(color: Colors.white),
-                // actions: [
-                //   IconButton(
-                //     onPressed: () async {
-                //       await _firebaseAuth.signOut();
-                //       Navigator.pushReplacement(
-                //         context,
-                //         MaterialPageRoute(builder: (context) => const LoginPage()),
-                //       );
-                //     },
-                //     icon: const Icon(Icons.exit_to_app),
-                //   ),
-                // ],
               ),
               Expanded(
                 child: MensagensChat(chatId: widget.chatId),
@@ -109,11 +95,14 @@ class _ChatPageState extends State<ChatPage> {
                     children: [
                       Expanded(
                         child: TextField(
-                          // keyboardType: TextInputType.multiline,
                           controller: _mensagemController,
-                          decoration: const InputDecoration(
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
                             hintText: 'Digite uma mensagem...',
-                            border: OutlineInputBorder(),
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.black.withOpacity(0.5),
+                            border: const OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xFF4B9460), width: 1.0),
@@ -124,6 +113,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
+                        color: Colors.white,
                         onPressed: _enviarMensagem,
                       ),
                     ],
