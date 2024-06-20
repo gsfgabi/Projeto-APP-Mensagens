@@ -45,7 +45,7 @@ class Mensagem extends StatelessWidget {
                     nomeUsuario,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: isMe ? Colors.white : Colors.black87,
+                      color: isMe ? Colors.white : Colors.white,
                     ),
                   ),
                 ),
@@ -62,14 +62,16 @@ class Mensagem extends StatelessWidget {
                       color: isMe ? Colors.green[100] : Colors.grey[300],
                       borderRadius: BorderRadius.only(
                         topLeft: isMe ? Radius.circular(8) : Radius.circular(0),
-                        topRight: isMe ? Radius.circular(0) : Radius.circular(8),
+                        topRight:
+                            isMe ? Radius.circular(0) : Radius.circular(8),
                         bottomLeft: Radius.circular(8),
                         bottomRight: Radius.circular(8),
                       ),
                     ),
                     child: Column(
-                      crossAxisAlignment:
-                          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                      crossAxisAlignment: isMe
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                       children: [
                         Text(
                           conteudoMensagem,
@@ -167,7 +169,10 @@ class Mensagem extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Cancelar'),
+            child: Text(
+              'Cancelar',
+              style: TextStyle(color: Color(0xFF4B9460)),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -176,7 +181,10 @@ class Mensagem extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('Salvar'),
+            child: const Text(
+              'Salvar',
+              style: TextStyle(color: Color(0xFF4B9460)),
+            ),
           ),
         ],
       ),
