@@ -24,6 +24,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _senhaFocusNode = FocusNode();
   final FocusNode _codigoFocusNode = FocusNode();
+  final FocusNode _turmaFocusNode = FocusNode();
 
   @override
   void dispose() {
@@ -31,6 +32,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
     _emailFocusNode.dispose();
     _senhaFocusNode.dispose();
     _codigoFocusNode.dispose();
+    _turmaFocusNode.dispose();
     super.dispose();
   }
 
@@ -63,127 +65,215 @@ class _RegisterStudentState extends State<RegisterStudent> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextFormField(
+                // child: TextFormField(
+                //   focusNode: _nomeFocusNode,
+                //   style: TextStyle(
+                //     color: _nomeFocusNode.hasFocus
+                //         ? const Color(0xFF4B9460)
+                //         : Colors.black,
+                //   ),
+                //   onChanged: (text) {
+                //     setState(() {
+                //       nomecompleto = text.toUpperCase();
+                //     });
+                //   },
+                //   decoration: const InputDecoration(
+                //     labelText: 'Nome Completo',
+                //     border: OutlineInputBorder(),
+                //     focusedBorder: OutlineInputBorder(
+                //       borderSide: BorderSide(
+                //         color: Color(0xFF4B9460),
+                //       ),
+                //     ),
+                //   ),
+                //   validator: (valor) {
+                //     if (valor == null || valor.trim().isEmpty) {
+                //       return 'Por favor, insira um nome válido!';
+                //     }
+                //     return null;
+                //   },
+                //   onSaved: (valorDigitado) {
+                //     if (valorDigitado != null) {
+                //       nomecompleto = valorDigitado.toUpperCase();
+                //     }
+                //   },
+                // ),
+                child: Focus(
                   focusNode: _nomeFocusNode,
-                  style: TextStyle(
-                    color: _nomeFocusNode.hasFocus
-                        ? const Color(0xFF4B9460)
-                        : Colors.black,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          setState(() {
+                            nomecompleto = text.toUpperCase();
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Nome Completo',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Por favor, insira um nome válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (valorDigitado) {
+                          if (valorDigitado != null) {
+                            nomecompleto = valorDigitado.toUpperCase();
+                          }
+                        },
+                      );
+                    },
                   ),
-                  onChanged: (text) {
-                    setState(() {
-                      nomecompleto = text.toUpperCase();
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Nome Completo',
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4B9460),
-                      ),
-                    ),
-                  ),
-                  validator: (valor) {
-                    if (valor == null || valor.trim().isEmpty) {
-                      return 'Por favor, insira um nome válido!';
-                    }
-                    return null;
-                  },
-                  onSaved: (valorDigitado) {
-                    if (valorDigitado != null) {
-                      nomecompleto = valorDigitado.toUpperCase();
-                    }
-                  },
                 ),
               ),
               const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextFormField(
+                child: Focus(
                   focusNode: _emailFocusNode,
-                  style: TextStyle(
-                    color: _emailFocusNode.hasFocus
-                        ? const Color(0xFF4B9460)
-                        : Colors.black,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          email = text;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              !value.contains('unicv.edu.br')) {
+                            return 'Por favor, insira um endereço de email válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            email = value;
+                          }
+                        },
+                      );
+                    },
                   ),
-                  onChanged: (text) {
-                    setState(() {
-                      email = text;
-                    });
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4B9460),
-                      ),
-                    ),
-                  ),
-                  validator: (valor) {
-                    if (valor == null ||
-                        valor.trim().isEmpty ||
-                        !valor.contains('unicv.edu.br')) {
-                      return 'Por favor, insira um endereço de email válido!';
-                    }
-                    return null;
-                  },
-                  onSaved: (valorDigitado) {
-                    if (valorDigitado != null) {
-                      email = valorDigitado;
-                    }
-                  },
                 ),
               ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              //   child: TextFormField(
+              //     focusNode: _emailFocusNode,
+              //     style: TextStyle(
+              //       color: _emailFocusNode.hasFocus
+              //           ? const Color(0xFF4B9460)
+              //           : Colors.black,
+              //     ),
+              //     onChanged: (text) {
+              //       setState(() {
+              //         email = text;
+              //       });
+              //     },
+              //     keyboardType: TextInputType.emailAddress,
+              //     decoration: const InputDecoration(
+              //       labelText: 'Email',
+              //       labelStyle: TextStyle(
+              //         color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+              //       ),
+              //       border: OutlineInputBorder(),
+              //       focusedBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: Color(0xFF4B9460),
+              //         ),
+              //       ),
+              //     ),
+              //     validator: (valor) {
+              //       if (valor == null ||
+              //           valor.trim().isEmpty ||
+              //           !valor.contains('unicv.edu.br')) {
+              //         return 'Por favor, insira um endereço de email válido!';
+              //       }
+              //       return null;
+              //     },
+              //     onSaved: (valorDigitado) {
+              //       if (valorDigitado != null) {
+              //         email = valorDigitado;
+              //       }
+              //     },
+              //   ),
+              // ),
               const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextFormField(
+                child: Focus(
                   focusNode: _senhaFocusNode,
-                  style: TextStyle(
-                    color: _senhaFocusNode.hasFocus
-                        ? const Color(0xFF4B9460)
-                        : Colors.black,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          senha = text;
+                        },
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
+                          labelText: 'Senha',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xFF4B9460),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().length < 6) {
+                            return 'A senha deve ter pelo menos 6 caracteres.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            senha = value;
+                          }
+                        },
+                      );
+                    },
                   ),
-                  onChanged: (text) {
-                    setState(() {
-                      senha = text;
-                    });
-                  },
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    border: const OutlineInputBorder(),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4B9460),
-                      ),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: const Color(0xFF4B9460),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
-                  ),
-                  validator: (valor) {
-                    if (valor == null || valor.trim().length < 6) {
-                      return 'A senha deve ter pelo menos 6 caracteres.';
-                    }
-                    return null;
-                  },
-                  onSaved: (valor) {
-                    if (valor != null) {
-                      senha = valor;
-                    }
-                  },
                 ),
               ),
               const SizedBox(height: 15),
@@ -247,22 +337,24 @@ class _RegisterStudentState extends State<RegisterStudent> {
               const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextFormField(
+                child: Focus(
                   focusNode: _codigoFocusNode,
-                  style: TextStyle(
-                    color: _codigoFocusNode.hasFocus
-                        ? const Color(0xFF4B9460)
-                        : Colors.black,
-                  ),
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
                   onChanged: (text) {
                     setState(() {
                       codigoturma = text.toUpperCase();
                     });
                   },
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Código da Turma',
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
+                    labelStyle: TextStyle(
+                      color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                    ),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0xFF4B9460),
                       ),
@@ -274,6 +366,9 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     }
                     return null;
                   },
+                  );
+                  },
+                ),
                 ),
               ),
               const SizedBox(height: 20),
