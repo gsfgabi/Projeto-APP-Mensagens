@@ -222,7 +222,6 @@ class _ClassPageState extends State<ClassPage> {
         configuraNotificacoes(salasCarregadas, usuarioAutenticado);
 
         return Scaffold(
-          // backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
             backgroundColor: const Color(0xFF4B9460),
             title: SizedBox(
@@ -302,49 +301,52 @@ class _ClassPageState extends State<ClassPage> {
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      _buildSectionHeader('Chats'),
-                      ...salasCarregadas.map((sala) {
-                        return FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('salas-participantes')
-                              .doc(sala
-                                  .id) // Utilizamos o ID da sala para recuperar os dados do curso
-                              .get(),
-                          builder: (context, cursoSnapshot) {
-                            if (cursoSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            }
-                            if (cursoSnapshot.hasError) {
-                              return Text(
-                                  'Erro ao carregar turma: ${cursoSnapshot.error}');
-                            }
-                            final cursoData = cursoSnapshot.data!.data()
-                                as Map<String, dynamic>;
-                            return ListTile(
-                              leading:
-                                  _buildIconForType(cursoData['tipoCurso']),
-                              contentPadding: const EdgeInsets.all(8),
-                              title: Text(cursoData['nome']),
-                              subtitle: Text(
-                                  'Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']} - Modalidade: ${cursoData['modalidade']}'),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatPage(
-                                        chatId: sala.id,
-                                        curso: cursoData['nome']),
+                  child: ListView.separated(
+                    itemCount: salasCarregadas.length,
+                    separatorBuilder: (context, index) =>
+                        Divider(), // Divisão entre os itens
+                    itemBuilder: (context, index) {
+                      var sala = salasCarregadas[index];
+                      return FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('salas-participantes')
+                            .doc(sala.id)
+                            .get(),
+                        builder: (context, cursoSnapshot) {
+                          if (cursoSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+                          if (cursoSnapshot.hasError) {
+                            return Text(
+                                'Erro ao carregar turma: ${cursoSnapshot.error}');
+                          }
+                          final cursoData = cursoSnapshot.data!.data()
+                              as Map<String, dynamic>;
+                          return ListTile(
+                            leading: _buildIconForType(cursoData['tipoCurso']),
+                            contentPadding: const EdgeInsets.all(8),
+                            title: Text(cursoData['nome']),
+                            subtitle: isCoordenador
+                                ? Text(
+                                    'Semestre: ${cursoData['semestre']} - Código: ${cursoData['codigo']} - Modalidade: ${cursoData['modalidade']}')
+                                : Text(
+                                    'Semestre: ${cursoData['semestre']} - Modalidade: ${cursoData['modalidade']}'),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                    chatId: sala.id,
+                                    curso: cursoData['nome'],
                                   ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }),
-                    ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               ],

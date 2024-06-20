@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importe a biblioteca intl para formatação de data e hora
-import '../widgets/app_controller.dart'; // Importe o AppController
-
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'mensagem.dart';
 
 class MensagensChat extends StatelessWidget {
   final String chatId;
-  const MensagensChat({super.key, required this.chatId});
+
+  const MensagensChat({Key? key, required this.chatId}) : super(key: key);
 
   Future<String> _buscarNomeUsuario(String emailUsuario) async {
     final querySnapshot = await FirebaseFirestore.instance
@@ -22,8 +22,30 @@ class MensagensChat extends StatelessWidget {
     return 'Usuário desconhecido';
   }
 
+  void _editarMensagem(String messageId, String novoTexto) async {
+    await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .doc(chatId)
+        .collection('mensagens')
+        .doc(messageId)
+        .update({
+      'texto': novoTexto,
+      'editada': true,
+    });
+  }
+
+  void _excluirMensagem(String messageId) async {
+    await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .doc(chatId)
+        .collection('mensagens')
+        .doc(messageId)
+        .delete();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('salas-participantes')
@@ -51,7 +73,6 @@ class MensagensChat extends StatelessWidget {
         }
 
         final mensagensCarregadas = snapshot.data!.docs;
-        final isDarkMode = AppController.instance.value;
 
         return Expanded(
           child: Padding(
@@ -60,18 +81,26 @@ class MensagensChat extends StatelessWidget {
               itemCount: mensagensCarregadas.length,
               itemBuilder: (context, index) {
                 final mensagem = mensagensCarregadas[index];
+                final messageId = mensagem.id;
                 final conteudoMensagem = mensagem['texto'];
                 final emailUsuario = mensagem['usuario'];
                 final timestamp = mensagem['timestamp'];
+                
+                // Verifica se o campo 'editada' existe no documento
+                final editada = mensagem.data() != null &&
+                    (mensagem.data()! as Map<String, dynamic>).containsKey('editada') &&
+                    mensagem['editada'] as bool;
 
                 // Formate a data e hora para o formato padrão brasileiro
-                final dataHoraFormatada = DateFormat('dd/MM/yyyy HH:mm')
-                    .format((timestamp as Timestamp).toDate());
+                final dataHoraFormatada =
+                    DateFormat('dd/MM/yyyy HH:mm').format(
+                        (timestamp as Timestamp).toDate());
 
                 return FutureBuilder(
                   future: _buscarNomeUsuario(emailUsuario),
                   builder: (context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
@@ -79,19 +108,27 @@ class MensagensChat extends StatelessWidget {
 
                     if (snapshot.hasError) {
                       return const Center(
-                        child: Text('Erro ao carregar o nome do usuário'),
+                        child: Text(
+                            'Erro ao carregar o nome do usuário'),
                       );
                     }
 
-                    final nomeUsuario = snapshot.data ?? 'Usuário desconhecido';
+                    final nomeUsuario =
+                        snapshot.data ?? 'Usuário desconhecido';
+                    final isMe = currentUser?.email == emailUsuario;
 
                     return Mensagem(
                       conteudoMensagem: conteudoMensagem,
                       nomeUsuario: nomeUsuario,
                       dataHora: dataHoraFormatada,
-                      corTexto: isDarkMode
-                          ? Colors.white
-                          : Colors.black, 
+                      isMe: isMe,
+                      editada: editada,
+                      onExcluir: () {
+                        _excluirMensagem(messageId);
+                      },
+                      onEditar: (novoTexto) {
+                        _editarMensagem(messageId, novoTexto);
+                      },
                     );
                   },
                 );

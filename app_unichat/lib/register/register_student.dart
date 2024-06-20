@@ -20,6 +20,20 @@ class _RegisterStudentState extends State<RegisterStudent> {
   bool _obscureText = true;
   final _chaveForm = GlobalKey<FormState>();
 
+  final FocusNode _nomeFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _senhaFocusNode = FocusNode();
+  final FocusNode _codigoFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _nomeFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _senhaFocusNode.dispose();
+    _codigoFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +64,12 @@ class _RegisterStudentState extends State<RegisterStudent> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
+                  focusNode: _nomeFocusNode,
+                  style: TextStyle(
+                    color: _nomeFocusNode.hasFocus
+                        ? const Color(0xFF4B9460)
+                        : Colors.black,
+                  ),
                   onChanged: (text) {
                     setState(() {
                       nomecompleto = text.toUpperCase();
@@ -58,6 +78,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Nome Completo',
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null || valor.trim().isEmpty) {
@@ -76,6 +101,12 @@ class _RegisterStudentState extends State<RegisterStudent> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
+                  focusNode: _emailFocusNode,
+                  style: TextStyle(
+                    color: _emailFocusNode.hasFocus
+                        ? const Color(0xFF4B9460)
+                        : Colors.black,
+                  ),
                   onChanged: (text) {
                     setState(() {
                       email = text;
@@ -85,6 +116,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null ||
@@ -105,17 +141,20 @@ class _RegisterStudentState extends State<RegisterStudent> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
+                  focusNode: _senhaFocusNode,
+                  style: TextStyle(
+                    color: _senhaFocusNode.hasFocus
+                        ? const Color(0xFF4B9460)
+                        : Colors.black,
+                  ),
                   onChanged: (text) {
                     setState(() {
                       senha = text;
                     });
                   },
-                    obscureText: _obscureText,
-                    decoration: InputDecoration(
+                  obscureText: _obscureText,
+                  decoration: InputDecoration(
                     labelText: 'Senha',
-                    labelStyle: const TextStyle(
-                      color: Color(0xFF4B9460),
-                    ),
                     border: const OutlineInputBorder(),
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
@@ -124,10 +163,8 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureText
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color:  const Color(0xFF4B9460),
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: const Color(0xFF4B9460),
                       ),
                       onPressed: () {
                         setState(() {
@@ -179,6 +216,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                         decoration: const InputDecoration(
                           labelText: 'Selecionar Curso',
                           border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
                         items: cursosList.map((String value) {
                           return DropdownMenuItem<String>(
@@ -206,6 +248,12 @@ class _RegisterStudentState extends State<RegisterStudent> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextFormField(
+                  focusNode: _codigoFocusNode,
+                  style: TextStyle(
+                    color: _codigoFocusNode.hasFocus
+                        ? const Color(0xFF4B9460)
+                        : Colors.black,
+                  ),
                   onChanged: (text) {
                     setState(() {
                       codigoturma = text.toUpperCase();
@@ -214,6 +262,11 @@ class _RegisterStudentState extends State<RegisterStudent> {
                   decoration: const InputDecoration(
                     labelText: 'Código da Turma',
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF4B9460),
+                      ),
+                    ),
                   ),
                   validator: (valor) {
                     if (valor == null || valor.trim().isEmpty) {

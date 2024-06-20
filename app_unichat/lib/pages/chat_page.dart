@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'login_page.dart';
-import '../widgets/mensagens_chat.dart';
-// import '../widgets/app_controller.dart'; // Importe o AppController
+import '../widgets/mensagens_chat.dart'; // Importe o widget MensagensChat
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -11,7 +9,7 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({super.key, required this.chatId, required this.curso});
+  const ChatPage({Key? key, required this.chatId, required this.curso}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -68,57 +66,61 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF4B9460),
-        title: Text(
-          widget.curso,
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () async {
-        //       await _firebaseAuth.signOut();
-        //       Navigator.pushReplacement(
-        //         context,
-        //         MaterialPageRoute(builder: (context) => const LoginPage()),
-        //       );
-        //     },
-        //     icon: const Icon(Icons.exit_to_app),
-        //   ),
-        // ],
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: MensagensChat(chatId: widget.chatId),
+          // Imagem de fundo
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.png',
+              fit: BoxFit.cover,
+            ),
           ),
-          if (_podeEnviarMensagem)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.multiline,
-                      controller: _mensagemController,
-                      decoration: const InputDecoration(
-                        hintText: 'Digite uma mensagem...',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xFF4B9460), width: 1.0),
+          Column(
+            children: [
+              AppBar(
+                backgroundColor: const Color(0xFF4B9460),
+                title: Text(
+                  widget.curso,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                iconTheme: const IconThemeData(color: Colors.white),
+              ),
+              Expanded(
+                child: MensagensChat(chatId: widget.chatId), // Integre o widget MensagensChat aqui
+              ),
+              if (_podeEnviarMensagem)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _mensagemController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Digite uma mensagem...',
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.black.withOpacity(0.5),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0xFF4B9460), width: 1.0),
+                            ),
+                          ),
+                          maxLines: null,
                         ),
                       ),
-                    ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        color: Colors.white,
+                        onPressed: _enviarMensagem,
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _enviarMensagem,
-                  ),
-                ],
-              ),
-            ),
+                ),
+            ],
+          ),
         ],
       ),
     );
