@@ -70,10 +70,10 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         decoration: InputDecoration(
                           labelText: 'Nome Completo',
                           labelStyle: TextStyle(
-                            color: isFocused ? Color(0xFF4B9460) : Colors.grey,
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
                           ),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Color(0xFF4B9460),
                             ),
@@ -111,10 +111,10 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         decoration: InputDecoration(
                           labelText: 'Email',
                           labelStyle: TextStyle(
-                            color: isFocused ? Color(0xFF4B9460) : Colors.grey,
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
                           ),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Color(0xFF4B9460),
                             ),
@@ -154,7 +154,7 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                         decoration: InputDecoration(
                           labelText: 'Senha',
                           labelStyle: TextStyle(
-                            color: isFocused ? Color(0xFF4B9460) : Colors.grey,
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
                           ),
                           border: const OutlineInputBorder(),
                           focusedBorder: const OutlineInputBorder(

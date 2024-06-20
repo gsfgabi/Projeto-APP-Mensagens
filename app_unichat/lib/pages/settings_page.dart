@@ -38,8 +38,8 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          _buildNotificationTile(context),
-          const Divider(),
+          // _buildNotificationTile(context),
+          // const Divider(),
           _buildThemeTile(context),
           const Divider(),
           _buildAboutTile(context),
@@ -50,15 +50,15 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildNotificationTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.notifications, color: Color(0xFF4B9460)),
-      title: const Text('Notificações'),
-      onTap: () {
-        _showNotificationsModal(context);
-      },
-    );
-  }
+  // Widget _buildNotificationTile(BuildContext context) {
+  //   return ListTile(
+  //     leading: const Icon(Icons.notifications, color: Color(0xFF4B9460)),
+  //     title: const Text('Notificações'),
+  //     onTap: () {
+  //       _showNotificationsModal(context);
+  //     },
+  //   );
+  // }
 
   Widget _buildThemeTile(BuildContext context) {
     return ListTile(
@@ -154,51 +154,51 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showNotificationsModal(BuildContext context) {
-    bool? permitirNotificacoes = true;
+  // void _showNotificationsModal(BuildContext context) {
+  //   bool? permitirNotificacoes = true;
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Notificações',
-          ),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SwitchListTile(
-                title: const Text(
-                  'Permitir Notificações',
-                ),
-                value: permitirNotificacoes!,
-                activeColor: Colors.green,
-                inactiveTrackColor: Colors.grey,
-                onChanged: (value) {
-                  setState(() {
-                    permitirNotificacoes = value;
-                  });
-                },
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar',
-                  style: TextStyle(color: Color(0xFF4B9460))),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child:
-                  const Text('OK', style: TextStyle(color: Color(0xFF4B9460))),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text(
+  //           'Notificações',
+  //         ),
+  //         content: StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setState) {
+  //             return SwitchListTile(
+  //               title: const Text(
+  //                 'Permitir Notificações',
+  //               ),
+  //               value: permitirNotificacoes!,
+  //               activeColor: Colors.green,
+  //               inactiveTrackColor: Colors.grey,
+  //               onChanged: (value) {
+  //                 setState(() {
+  //                   permitirNotificacoes = value;
+  //                 });
+  //               },
+  //             );
+  //           },
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text('Cancelar',
+  //                 style: TextStyle(color: Color(0xFF4B9460))),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child:
+  //                 const Text('OK', style: TextStyle(color: Color(0xFF4B9460))),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

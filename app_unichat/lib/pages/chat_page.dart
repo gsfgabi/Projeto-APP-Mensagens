@@ -9,8 +9,7 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({Key? key, required this.chatId, required this.curso})
-      : super(key: key);
+  const ChatPage({super.key, required this.chatId, required this.curso});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -106,7 +105,7 @@ class _ChatPageState extends State<ChatPage> {
                             filled: true,
                             fillColor: Colors.black.withOpacity(0.5),
                             border: const OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xFF4B9460), width: 1.0),
                             ),

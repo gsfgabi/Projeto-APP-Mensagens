@@ -10,7 +10,7 @@ class Mensagem extends StatelessWidget {
   final bool editada;
 
   const Mensagem({
-    Key? key,
+    super.key,
     required this.conteudoMensagem,
     required this.nomeUsuario,
     required this.dataHora,
@@ -18,102 +18,99 @@ class Mensagem extends StatelessWidget {
     this.onExcluir,
     this.onEditar,
     this.editada = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width * 0.7;
-    final textoStyle = TextStyle(color: Colors.black87);
+    const textoStyle = TextStyle(color: Colors.black87);
 
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!isMe) // Espaço vazio do lado oposto ao texto, se a mensagem não for minha
-            SizedBox(width: 50),
-          Flexible(
-            child: Column(
-              crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4.0),
-                  child: Text(
-                    nomeUsuario,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isMe ? Colors.white : Colors.white,
-                    ),
+    return Row(
+      mainAxisAlignment:
+          isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!isMe) // Espaço vazio do lado oposto ao texto, se a mensagem não for minha
+          const SizedBox(width: 50),
+        Flexible(
+          child: Column(
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
+                child: Text(
+                  nomeUsuario,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isMe ? Colors.white : Colors.white,
                   ),
                 ),
-                GestureDetector(
-                  onTapDown: (TapDownDetails details) {
-                    if (isMe) {
-                      _showContextMenu(context, details.globalPosition);
-                    }
-                  },
-                  child: Container(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.green[100] : Colors.grey[300],
-                      borderRadius: BorderRadius.only(
-                        topLeft: isMe ? Radius.circular(8) : Radius.circular(0),
-                        topRight:
-                            isMe ? Radius.circular(0) : Radius.circular(8),
-                        bottomLeft: Radius.circular(8),
-                        bottomRight: Radius.circular(8),
-                      ),
+              ),
+              GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  if (isMe) {
+                    _showContextMenu(context, details.globalPosition);
+                  }
+                },
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isMe ? Colors.green[100] : Colors.grey[300],
+                    borderRadius: BorderRadius.only(
+                      topLeft: isMe ? const Radius.circular(8) : const Radius.circular(0),
+                      topRight:
+                          isMe ? const Radius.circular(0) : const Radius.circular(8),
+                      bottomLeft: const Radius.circular(8),
+                      bottomRight: const Radius.circular(8),
                     ),
-                    child: Column(
-                      crossAxisAlignment: isMe
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          conteudoMensagem,
-                          style: textoStyle,
-                        ),
-                        SizedBox(height: 4.0),
-                        Row(
-                          mainAxisAlignment: isMe
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              dataHora,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: isMe
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        conteudoMensagem,
+                        style: textoStyle,
+                      ),
+                      const SizedBox(height: 4.0),
+                      Row(
+                        mainAxisAlignment: isMe
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            dataHora,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
                             ),
-                            if (editada)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4.0),
-                                child: Text(
-                                  '(Editada)',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
+                          ),
+                          if (editada)
+                            const Padding(
+                              padding: EdgeInsets.only(left: 4.0),
+                              child: Text(
+                                '(Editada)',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
                                 ),
                               ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          if (isMe) // Espaço vazio do lado oposto ao texto, se a mensagem for minha
-            SizedBox(width: 50),
-        ],
-      ),
+        ),
+        if (isMe) // Espaço vazio do lado oposto ao texto, se a mensagem for minha
+          const SizedBox(width: 50),
+      ],
     );
   }
 
@@ -121,19 +118,19 @@ class Mensagem extends StatelessWidget {
     final RelativeRect positionPopup = RelativeRect.fromLTRB(
       tapPosition.dx,
       tapPosition.dy,
-      tapPosition.dx + 32,
-      tapPosition.dy + 32,
+      tapPosition.dx,
+      tapPosition.dy,
     );
 
     showMenu(
       context: context,
       position: positionPopup,
       items: <PopupMenuEntry>[
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'editar',
           child: Text('Editar'),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'excluir',
           child: Text('Excluir'),
         ),
@@ -158,10 +155,10 @@ class Mensagem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Editar Mensagem'),
+        title: const Text('Editar Mensagem'),
         content: TextField(
           controller: _controller,
-          decoration: InputDecoration(hintText: 'Digite sua mensagem...'),
+          decoration: const InputDecoration(hintText: 'Digite sua mensagem...'),
           maxLines: null,
         ),
         actions: [
@@ -169,7 +166,7 @@ class Mensagem extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text(
+            child: const Text(
               'Cancelar',
               style: TextStyle(color: Color(0xFF4B9460)),
             ),

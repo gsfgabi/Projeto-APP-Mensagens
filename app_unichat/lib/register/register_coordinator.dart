@@ -18,6 +18,18 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
   bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
 
+  final FocusNode _focusNodeNomeCompleto = FocusNode();
+  final FocusNode _focusNodeEmail = FocusNode();
+  final FocusNode _focusNodeSenha = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNodeNomeCompleto.dispose();
+    _focusNodeEmail.dispose();
+    _focusNodeSenha.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,108 +61,236 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: TextFormField(
-                    onChanged: (text) {
-                      setState(() {
-                        nomeCompleto = text.toUpperCase(); // Convertendo para maiúsculas
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Nome Completo',
-                      border: OutlineInputBorder(),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xFF4B9460),
+                  // child: TextFormField(
+                  //   onChanged: (text) {
+                  //     setState(() {
+                  //       nomeCompleto = text.toUpperCase(); // Convertendo para maiúsculas
+                  //     });
+                  //   },
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Nome Completo',
+                  //     border: OutlineInputBorder(),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Color(0xFF4B9460),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().isEmpty) {
+                  //       return 'Por favor, insira um nome válido!';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onSaved: (value) {
+                  //     if (value != null) {
+                  //       nomeCompleto = value.toUpperCase(); // Convertendo para maiúsculas
+                  //     }
+                  //   },
+                  // ),
+
+                  child: Focus(
+                  focusNode: _focusNodeNomeCompleto,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          nomeCompleto = text;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Nome Completo',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Por favor, insira um nome válido!';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      if (value != null) {
-                        nomeCompleto = value.toUpperCase(); // Convertendo para maiúsculas
-                      }
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Por favor, insira um nome válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            nomeCompleto = value.toUpperCase();
+                          }
+                        },
+                      );
                     },
                   ),
+                ),
                 ),
                 const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: TextFormField(
-                    onChanged: (text) {
-                      email = text;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xFF4B9460),
+                  // child: TextFormField(
+                  //   onChanged: (text) {
+                  //     email = text;
+                  //   },
+                  //   keyboardType: TextInputType.emailAddress,
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Email',
+                  //     border: OutlineInputBorder(),
+                  //     focusedBorder: const OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Color(0xFF4B9460),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null ||
+                  //         value.trim().isEmpty ||
+                  //         !value.contains('unicv.edu.br')) {
+                  //       return 'Por favor, insira um endereço de email válido!';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onSaved: (value) {
+                  //     if (value != null) {
+                  //       email = value;
+                  //     }
+                  //   },
+                  // ),
+
+                  child: Focus(
+                  focusNode: _focusNodeEmail,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          email = text;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null ||
-                          value.trim().isEmpty ||
-                          !value.contains('unicv.edu.br')) {
-                        return 'Por favor, insira um endereço de email válido!';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      if (value != null) {
-                        email = value;
-                      }
+                        validator: (value) {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              !value.contains('unicv.edu.br')) {
+                            return 'Por favor, insira um endereço de email válido!';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            email = value;
+                          }
+                        },
+                      );
                     },
                   ),
+                ),
                 ),
                 const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: TextFormField(
-                    onChanged: (text) {
-                      senha = text;
+                  // child: TextFormField(
+                  //   onChanged: (text) {
+                  //     senha = text;
+                  //   },
+                  //   obscureText: _obscureText,
+                  //   decoration: InputDecoration(
+                  //   labelText: 'Senha',
+                  //   border: const OutlineInputBorder(),
+                  //   focusedBorder: const OutlineInputBorder(
+                  //     borderSide: BorderSide(
+                  //       color: Color(0xFF4B9460),
+                  //     ),
+                  //   ),
+                  //   suffixIcon: IconButton(
+                  //     icon: Icon(
+                  //       _obscureText
+                  //           ? Icons.visibility
+                  //           : Icons.visibility_off,
+                  //       color:  const Color(0xFF4B9460),
+                  //     ),
+                  //     onPressed: () {
+                  //       setState(() {
+                  //         _obscureText = !_obscureText;
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().length < 6) {
+                  //       return 'A senha deve ter pelo menos 6 caracteres.';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onSaved: (value) {
+                  //     if (value != null) {
+                  //       senha = value;
+                  //     }
+                  //   },
+                  // ),
+
+                  child: Focus(
+                  focusNode: _focusNodeSenha,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          senha = text;
+                        },
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
+                          labelText: 'Senha',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xFF4B9460),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().length < 6) {
+                            return 'A senha deve ter pelo menos 6 caracteres.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            senha = value;
+                          }
+                        },
+                      );
                     },
-                    obscureText: _obscureText,
-                    decoration: InputDecoration(
-                    labelText: 'Senha',
-                    border: const OutlineInputBorder(),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4B9460),
-                      ),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color:  const Color(0xFF4B9460),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
                   ),
-                    validator: (value) {
-                      if (value == null || value.trim().length < 6) {
-                        return 'A senha deve ter pelo menos 6 caracteres.';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      if (value != null) {
-                        senha = value;
-                      }
-                    },
-                  ),
+                ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
