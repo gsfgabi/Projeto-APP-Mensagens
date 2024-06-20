@@ -51,7 +51,9 @@ class Mensagem extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
-                    _showContextMenu(context, details.globalPosition);
+                    if (isMe) {
+                      _showContextMenu(context, details.globalPosition);
+                    }
                   },
                   child: Container(
                     constraints: BoxConstraints(maxWidth: maxWidth),
@@ -146,6 +148,8 @@ class Mensagem extends StatelessWidget {
   }
 
   void _editarMensagem(BuildContext context) {
+    if (!isMe) return; // Não permite editar se não for a mensagem do usuário
+
     final TextEditingController _controller = TextEditingController();
     _controller.text = conteudoMensagem;
 
@@ -179,4 +183,3 @@ class Mensagem extends StatelessWidget {
     );
   }
 }
-
