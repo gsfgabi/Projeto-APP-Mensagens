@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/mensagens_chat.dart'; // Importe o widget MensagensChat
 
+
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class ChatPage extends StatefulWidget {

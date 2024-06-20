@@ -533,7 +533,7 @@ class _ClassPageState extends State<ClassPage> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Text(
