@@ -62,7 +62,7 @@ class MensagensChat extends StatelessWidget {
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(
-            child: Text('Nenhuma mensagem enviada!'),
+            child: Text('Nenhuma mensagem enviada!', style: TextStyle(color: Colors.white),),
           );
         }
 

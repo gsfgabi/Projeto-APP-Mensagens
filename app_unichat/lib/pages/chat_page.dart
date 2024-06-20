@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/mensagens_chat.dart'; // Importe o widget MensagensChat
 
-
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 class ChatPage extends StatefulWidget {
   final String chatId;
   final String curso;
 
-  const ChatPage({Key? key, required this.chatId, required this.curso}) : super(key: key);
+  const ChatPage({Key? key, required this.chatId, required this.curso})
+      : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -87,7 +87,9 @@ class _ChatPageState extends State<ChatPage> {
                 iconTheme: const IconThemeData(color: Colors.white),
               ),
               Expanded(
-                child: MensagensChat(chatId: widget.chatId), // Integre o widget MensagensChat aqui
+                child: MensagensChat(
+                    chatId:
+                        widget.chatId), // Integre o widget MensagensChat aqui
               ),
               if (_podeEnviarMensagem)
                 Padding(

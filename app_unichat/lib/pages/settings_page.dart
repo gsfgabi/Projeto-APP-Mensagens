@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/app_controller.dart';
+import 'about_page.dart';
 // import 'login_page.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 
@@ -74,7 +75,10 @@ class _SettingsPageState extends State<SettingsPage> {
       leading: const Icon(Icons.info, color: Color(0xFF4B9460)),
       title: const Text('Sobre'),
       onTap: () {
-        // Lógica para a opção de Sobre
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AboutPage()),
+        );
       },
     );
   }
