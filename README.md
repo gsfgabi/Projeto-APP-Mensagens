@@ -69,6 +69,17 @@ Este projeto foi desenvolvido como parte do trabalho semestral na faculdade. Cri
    ```bash
    flutter run
    ```
+5. Acesse com algum usuario:
+   ```bash
+   Email: coordenadorunichat@unicv.edu.br
+   Senha: 123456
+
+   Email: professorunichat@unicv.edu.br
+   Senha:123456
+
+   Email: alunounichat@unicv.edu.br
+   Senha: 123456
+   ```
 
 ## 📜 Licença
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
