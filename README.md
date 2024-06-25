@@ -48,6 +48,7 @@ Este projeto foi desenvolvido como parte do trabalho semestral na faculdade. Cri
   <img style="height:48px; margin: 0 10px;" src="https://img.icons8.com/color/48/flutter.png" alt="Flutter"/>
   <img style="height:48px; margin: 0 10px;" src="https://img.icons8.com/color/48/figma--v1.png" alt="Figma"/>
   <img style="height:48px; margin: 0 10px;" src="https://img.icons8.com/office/80/prototype.png" alt="Prototipagem"/>
+  <img style="height:48px; margin: 0 10px;" src="https://img.icons8.com/color/48/firebase.png" alt="firebase"/>
 </div>
 
 ---
