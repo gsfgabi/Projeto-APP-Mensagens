@@ -10,9 +10,9 @@ Este projeto foi desenvolvido como parte do trabalho semestral na faculdade. Cri
 ## Funcionalidades
 - **Cadastro de Usuários:** Registro de alunos, professores e coordenadores.
 - **Envio de Mensagens:** Professores e coordenadores podem enviar mensagens; alunos apenas recebem.
-- **Visualização de Perfil:** Permite que os usuários vejam e editem seus perfis.
+- **Visualização de Perfil:** Permite que os usuários vejam seus perfis.
 - **Modo Escuro:** Opção de tema escuro para melhorar a experiência do usuário.
-- **Notificações Push:** Alerta os usuários sobre novas mensagens e atualizações.
+- **Notificações Push:** Alerta os usuários sobre novas mensagens.
 
 ## Tecnologias Utilizadas
 - **Figma:** Ferramenta para design e prototipagem das telas.
