@@ -1,10 +1,21 @@
 version: 2
 updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 1
+    rebase-strategy: auto
+    groups:
+      github-actions:
+        patterns:
+          - "*"
   - package-ecosystem: npm
     directory: /app_unichat/functions
     schedule:
       interval: weekly
     open-pull-requests-limit: 1
+    rebase-strategy: auto
     groups:
       functions-version:
         applies-to: version-updates
@@ -19,6 +30,7 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 1
+    rebase-strategy: auto
     groups:
       flutter-version:
         applies-to: version-updates
