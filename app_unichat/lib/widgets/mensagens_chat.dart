@@ -9,17 +9,20 @@ class MensagensChat extends StatelessWidget {
 
   const MensagensChat({super.key, required this.chatId});
 
-  Future<String> _buscarNomeUsuario(String emailUsuario) async {
+  Future<String> _buscarNomeUsuario(String emailUsuario, Map<String, dynamic> dados) async {
+    final gravado = dados['nomeUsuario'];
+    if (gravado is String && gravado.trim().isNotEmpty) {
+      return gravado;
+    }
     final querySnapshot = await FirebaseFirestore.instance
         .collection('usuarios')
-        .where('email', isEqualTo: emailUsuario)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.data()['usuario'];
+    if (emailUsuario == FirebaseAuth.instance.currentUser?.email &&
+        querySnapshot.data() != null) {
+      return querySnapshot.data()!['usuario'] ?? 'Usuário desconhecido';
     }
-
-    return 'Usuário desconhecido';
+    return emailUsuario;
   }
 
   void _editarMensagem(String messageId, String novoTexto) async {
@@ -82,14 +85,13 @@ class MensagensChat extends StatelessWidget {
               itemBuilder: (context, index) {
                 final mensagem = mensagensCarregadas[index];
                 final messageId = mensagem.id;
-                final conteudoMensagem = mensagem['texto'];
-                final emailUsuario = mensagem['usuario'];
-                final timestamp = mensagem['timestamp'];
+                final dados = mensagem.data()! as Map<String, dynamic>;
+                final conteudoMensagem = dados['texto'];
+                final emailUsuario = dados['usuario'];
+                final timestamp = dados['timestamp'];
                 
                 // Verifica se o campo 'editada' existe no documento
-                final editada = mensagem.data() != null &&
-                    (mensagem.data()! as Map<String, dynamic>).containsKey('editada') &&
-                    mensagem['editada'] as bool;
+                final editada = dados['editada'] == true;
 
                 // Formate a data e hora para o formato padrão brasileiro
                 final dataHoraFormatada =
@@ -97,7 +99,7 @@ class MensagensChat extends StatelessWidget {
                         (timestamp as Timestamp).toDate());
 
                 return FutureBuilder(
-                  future: _buscarNomeUsuario(emailUsuario),
+                  future: _buscarNomeUsuario(emailUsuario, dados),
                   builder: (context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.connectionState ==
                         ConnectionState.waiting) {

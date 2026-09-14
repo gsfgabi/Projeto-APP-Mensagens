@@ -47,20 +47,28 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void _enviarMensagem() {
+  Future<void> _enviarMensagem() async {
     final usuario = _firebaseAuth.currentUser;
-    if (usuario != null && _mensagemController.text.isNotEmpty) {
-      FirebaseFirestore.instance
-          .collection('salas-participantes')
-          .doc(widget.chatId)
-          .collection('mensagens')
-          .add({
-        'texto': _mensagemController.text,
-        'usuario': usuario.email,
-        'timestamp': Timestamp.now(),
-      });
-      _mensagemController.clear();
+    if (usuario == null ||
+        !_podeEnviarMensagem ||
+        _mensagemController.text.trim().isEmpty) {
+      return;
     }
+    final perfil = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(usuario.uid)
+        .get();
+    await FirebaseFirestore.instance
+        .collection('salas-participantes')
+        .doc(widget.chatId)
+        .collection('mensagens')
+        .add({
+      'texto': _mensagemController.text.trim(),
+      'usuario': usuario.email,
+      'nomeUsuario': perfil.data()?['usuario'] ?? usuario.email,
+      'timestamp': Timestamp.now(),
+    });
+    _mensagemController.clear();
   }
 
   @override

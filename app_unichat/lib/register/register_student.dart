@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:curso_flutter_flutterando/firebase/funcoes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -279,58 +281,42 @@ class _RegisterStudentState extends State<RegisterStudent> {
               const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('salas-participantes')
-                      .snapshots(),
+                child: FutureBuilder<List<String>>(
+                  future: FuncoesUnichat.listarNomesTurmas(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const CircularProgressIndicator();
-                    } else {
-                      Set<String> cursos = {};
-                      for (var doc in snapshot.data!.docs) {
-                        var data = doc.data() as Map<String, dynamic>;
-                        if (data.containsKey('nome')) {
-                          String? nomeCurso = data['nome'];
-                          if (nomeCurso != null) {
-                            cursos.add(nomeCurso);
-                          }
-                        }
-                      }
-
-                      List<String> cursosList = cursos.toList();
-                      cursosList.sort(); // Ordenando cursos em ordem crescente
-
-                      return DropdownButtonFormField<String>(
-                        value: selecionarcurso,
-                        decoration: const InputDecoration(
-                          labelText: 'Selecionar Curso',
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF4B9460),
-                            ),
+                    }
+                    final cursosList = snapshot.data!;
+                    return DropdownButtonFormField<String>(
+                      value: selecionarcurso,
+                      decoration: const InputDecoration(
+                        labelText: 'Selecionar Curso',
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF4B9460),
                           ),
                         ),
-                        items: cursosList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selecionarcurso = value;
-                          });
-                        },
-                        validator: (valor) {
-                          if (valor == null || valor.isEmpty) {
-                            return 'Por favor, selecione um curso!';
-                          }
-                          return null;
-                        },
-                      );
-                    }
+                      ),
+                      items: cursosList.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selecionarcurso = value;
+                        });
+                      },
+                      validator: (valor) {
+                        if (valor == null || valor.isEmpty) {
+                          return 'Por favor, selecione um curso!';
+                        }
+                        return null;
+                      },
+                    );
                   },
                 ),
               ),
@@ -391,15 +377,33 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     return;
                   }
 
-                  bool isTurmaValida = await verificarCodigoTurma();
-                  if (isTurmaValida) {
+                  try {
+                    _chaveForm.currentState!.save();
                     await cadastrarUsuario();
-                    await adicionarUsuarioNaTurma();
-                  } else {
+                    await FuncoesUnichat.entrarTurma(codigoturma);
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('O código da turma é inválido!'),
+                        content: Text('Cadastro realizado com sucesso!'),
                       ),
+                    );
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  } on FirebaseFunctionsException catch (error) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error.message ?? 'O código da turma é inválido!'),
+                      ),
+                    );
+                  } on FirebaseAuthException catch (error) {
+                    String message = 'Falha no cadastro de novo aluno';
+                    if (error.code == 'email-already-in-use') {
+                      message = 'Email já utilizado';
+                    }
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(message)),
                     );
                   }
                 },
@@ -425,68 +429,22 @@ class _RegisterStudentState extends State<RegisterStudent> {
     );
   }
 
-  Future<bool> verificarCodigoTurma() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .where('codigo', isEqualTo: codigoturma)
-        .get();
-
-    return querySnapshot.docs.isNotEmpty;
-  }
-
   Future<void> cadastrarUsuario() async {
-    try {
-      final credenciaisUsuario =
-          await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: senha,
-      );
-
-      await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(credenciaisUsuario.user!.uid)
-          .set({
-        'email': email,
-        'isAdmin': false,
-        'isProfessor': false,
-        'isCoordenador': false,
-        'usuario': nomecompleto,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cadastro realizado com sucesso!'),
-        ),
-      );
-
-      Navigator.of(context).pushReplacementNamed('/login');
-    } on FirebaseAuthException catch (error) {
-      String message = 'Falha no cadastro de novo aluno';
-      if (error.code == 'email-already-in-use') {
-        message = 'Email já utilizado';
-      }
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
-      );
-    }
-  }
-
-  Future<void> adicionarUsuarioNaTurma() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .where('codigo', isEqualTo: codigoturma)
-        .get();
-
-    String turmaId = querySnapshot.docs.first.id;
+    final credenciaisUsuario =
+        await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: senha,
+    );
 
     await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .doc(turmaId)
-        .update({
-      'email': FieldValue.arrayUnion([email])
+        .collection('usuarios')
+        .doc(credenciaisUsuario.user!.uid)
+        .set({
+      'email': email,
+      'isAdmin': false,
+      'isProfessor': false,
+      'isCoordenador': false,
+      'usuario': nomecompleto,
     });
   }
 }

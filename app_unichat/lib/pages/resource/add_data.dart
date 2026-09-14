@@ -1,34 +1,37 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 final FirebaseStorage _storage = FirebaseStorage.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class StoreData {
-  Future<String> uploadImageToStorage(String childName,Uint8List file) async {
-    Reference ref = _storage.ref().child(childName);
-    UploadTask uploadTask = ref.putData(file);
+  Future<String> uploadImageToStorage(String userId, Uint8List file) async {
+    Reference ref = _storage.ref().child('profileImages').child(userId);
+    UploadTask uploadTask = ref.putData(
+      file,
+      SettableMetadata(contentType: 'image/jpeg'),
+    );
     TaskSnapshot snapshot = await uploadTask;
-    String downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
+    return snapshot.ref.getDownloadURL();
   }
 
   Future<String> saveData({
     required Uint8List file,
   }) async {
-    String resp = " Some Error Occurred";
-    try{
-        String imageUrl = await uploadImageToStorage('profileImage', file);
-        await _firestore.collection('usuarios').add({
-          'imageLink': imageUrl,
-        });
-
-        resp = 'success';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return 'Faça login para enviar a foto.';
     }
-        catch(err){
-          resp =err.toString();
-        }
-        return resp;
+    try {
+      String imageUrl = await uploadImageToStorage(user.uid, file);
+      await _firestore.collection('usuarios').doc(user.uid).update({
+        'imageLink': imageUrl,
+      });
+      return 'success';
+    } catch (err) {
+      return err.toString();
+    }
   }
 }

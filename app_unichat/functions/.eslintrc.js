@@ -5,7 +5,7 @@ module.exports = {
     node: true,
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2022,
     sourceType: "module",
   },
   extends: [
@@ -21,6 +21,9 @@ module.exports = {
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
     "object-curly-spacing": ["error", "always"],
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off",
+    "max-len": ["error", { "code": 120 }],
   },
   overrides: [
     {

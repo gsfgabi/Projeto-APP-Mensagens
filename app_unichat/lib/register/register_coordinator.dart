@@ -1,8 +1,6 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:curso_flutter_flutterando/firebase/funcoes.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterCoordinator extends StatefulWidget {
   const RegisterCoordinator({super.key});
@@ -15,18 +13,21 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
   String nomeCompleto = '';
   String email = '';
   String senha = '';
+  String convite = '';
   bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
 
   final FocusNode _focusNodeNomeCompleto = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodeSenha = FocusNode();
+  final FocusNode _focusNodeConvite = FocusNode();
 
   @override
   void dispose() {
     _focusNodeNomeCompleto.dispose();
     _focusNodeEmail.dispose();
     _focusNodeSenha.dispose();
+    _focusNodeConvite.dispose();
     super.dispose();
   }
 
@@ -292,6 +293,44 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                   ),
                 ),
                 ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Focus(
+                  focusNode: _focusNodeConvite,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          convite = text;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Código de convite',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Informe o convite da coordenação.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          convite = value ?? '';
+                        },
+                      );
+                    },
+                  ),
+                ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -304,48 +343,32 @@ class _RegisterCoordinatorState extends State<RegisterCoordinator> {
                     _formKey.currentState!.save();
 
                     try {
-                      // Verifica se o email e a senha foram fornecidos
                       if (email.isNotEmpty && senha.isNotEmpty) {
-                        // Verifica se o email é válido
                         if (email.contains('unicv.edu.br')) {
-                          // Cadastra o usuário no banco de dados
-                          final credentials = await _firebaseAuth.createUserWithEmailAndPassword(
+                          await FuncoesUnichat.criarContaEquipe(
                             email: email,
                             password: senha,
+                            nome: nomeCompleto,
+                            papel: 'coordenador',
+                            convite: convite,
                           );
 
-                          // Salva os dados do coordenador no Firestore
-                          await FirebaseFirestore.instance.collection('usuarios').doc(credentials.user!.uid).set({
-                            'email': email,
-                            'usuario': nomeCompleto, // Salvando o nome em maiúsculas
-                            'isProfessor': false,
-                            'isCoordenador': true,
-                          });
-
-                          // Exibe a notificação de cadastro realizado com sucesso
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Cadastro realizado com sucesso!'),
                             ),
                           );
 
-                          // Redireciona para a tela de login após o cadastro
                           Navigator.of(context).pushReplacementNamed('/login');
                         }
-                      } else {
-                        // Exibe uma mensagem de erro se o email ou senha estiverem vazios
-                        print('Por favor, insira seu email e senha!');
                       }
-                    } on FirebaseAuthException catch (error) {
-                      // Trata erros de autenticação
-                      String message = 'Falha no cadastro de novo coordenador';
-                      if (error.code == 'email-already-in-use') {
-                        message = 'Email já utilizado';
-                      }
+                    } on FirebaseFunctionsException catch (error) {
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(message),
+                          content: Text(
+                            error.message ?? 'Falha no cadastro de novo coordenador',
+                          ),
                         ),
                       );
                     }

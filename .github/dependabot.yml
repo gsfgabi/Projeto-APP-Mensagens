@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /app_unichat/functions
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: pub
+    directory: /app_unichat
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5

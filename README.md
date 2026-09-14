@@ -70,17 +70,18 @@ Este projeto foi desenvolvido como parte do trabalho semestral na faculdade. Cri
    ```bash
    flutter run
    ```
-5. Acesse com algum usuario:
-   ```bash
-   Email: coordenadorunichat@unicv.edu.br
-   Senha: 123456
+5. Acesse com a conta que a coordenação criou. Contas de teste **não ficam** neste README.
 
-   Email: professorunichat@unicv.edu.br
-   Senha:123456
+Para cadastrar docente ou coordenador, use o **código de convite** definido em `STAFF_INVITE_CODE` (Functions → variáveis de ambiente). Sem isso, o cadastro de equipe é recusado.
 
-   Email: alunounichat@unicv.edu.br
-   Senha: 123456
-   ```
+Depois de puxar este commit, publique regras e functions:
+
+```bash
+cd app_unichat
+firebase deploy --only functions,firestore:rules,storage
+```
+
+Rotacione no Firebase Auth qualquer senha que já tenha aparecido em versão antiga deste README.
 
 ## 📜 Licença
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.

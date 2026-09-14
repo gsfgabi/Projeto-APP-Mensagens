@@ -1,8 +1,6 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:curso_flutter_flutterando/firebase/funcoes.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-final _firebaseAuth = FirebaseAuth.instance;
 
 class RegisterTeacher extends StatefulWidget {
   const RegisterTeacher({super.key});
@@ -15,17 +13,20 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
   String nomeCompleto = '';
   String email = '';
   String senha = '';
+  String convite = '';
   bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeNomeCompleto = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodeSenha = FocusNode();
+  final FocusNode _focusNodeConvite = FocusNode();
 
   @override
   void dispose() {
     _focusNodeNomeCompleto.dispose();
     _focusNodeEmail.dispose();
     _focusNodeSenha.dispose();
+    _focusNodeConvite.dispose();
     super.dispose();
   }
 
@@ -192,6 +193,44 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                   ),
                 ),
               ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Focus(
+                  focusNode: _focusNodeConvite,
+                  child: Builder(
+                    builder: (context) {
+                      final isFocused = Focus.of(context).hasFocus;
+                      return TextFormField(
+                        onChanged: (text) {
+                          convite = text;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Código de convite',
+                          labelStyle: TextStyle(
+                            color: isFocused ? const Color(0xFF4B9460) : Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFF4B9460),
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Informe o convite da coordenação.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          convite = value ?? '';
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -206,21 +245,13 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
                   try {
                     if (email.isNotEmpty && senha.isNotEmpty) {
                       if (email.contains('unicv.edu.br')) {
-                        final credentials =
-                            await _firebaseAuth.createUserWithEmailAndPassword(
+                        await FuncoesUnichat.criarContaEquipe(
                           email: email,
                           password: senha,
+                          nome: nomeCompleto.toUpperCase(),
+                          papel: 'professor',
+                          convite: convite,
                         );
-
-                        await FirebaseFirestore.instance
-                            .collection('usuarios')
-                            .doc(credentials.user!.uid)
-                            .set({
-                          'email': email,
-                          'usuario': nomeCompleto.toUpperCase(),
-                          'isProfessor': true,
-                          'isCoordenador': false,
-                        });
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -230,18 +261,12 @@ class _RegisterTeacherState extends State<RegisterTeacher> {
 
                         Navigator.of(context).pushReplacementNamed('/login');
                       }
-                    } else {
-                      print('Por favor, insira seu email e senha!');
                     }
-                  } on FirebaseAuthException catch (error) {
-                    String message = 'Falha no cadastro de novo docente';
-                    if (error.code == 'email-already-in-use') {
-                      message = 'Email já utilizado';
-                    }
+                  } on FirebaseFunctionsException catch (error) {
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(message),
+                        content: Text(error.message ?? 'Falha no cadastro de novo docente'),
                       ),
                     );
                   }

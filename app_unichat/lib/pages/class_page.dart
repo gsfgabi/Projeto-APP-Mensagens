@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curso_flutter_flutterando/pages/chat_page.dart';
 import 'package:curso_flutter_flutterando/pages/login_page.dart';
+import 'package:curso_flutter_flutterando/firebase/funcoes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -50,41 +52,32 @@ class _ClassPageState extends State<ClassPage> {
     if (usuario != null) {
       final usuarioDoc = await FirebaseFirestore.instance
           .collection('usuarios')
-          .where('email', isEqualTo: usuario.email)
+          .doc(usuario.uid)
           .get();
 
-      if (usuarioDoc.docs.isNotEmpty) {
-        final dadosUsuario = usuarioDoc.docs.first.data();
+      if (usuarioDoc.exists) {
+        final dadosUsuario = usuarioDoc.data();
         setState(() {
-          isProfessor = dadosUsuario['isProfessor'] ?? false;
-          isCoordenador = dadosUsuario['isCoordenador'] ?? false;
+          isProfessor = dadosUsuario?['isProfessor'] ?? false;
+          isCoordenador = dadosUsuario?['isCoordenador'] ?? false;
         });
       }
     }
   }
 
   Future<void> _carregarCursos() async {
-    final cursosSnapshot = await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .get();
-    final List<String> cursosExistentes = [];
-    final Set<String> nomesCursos =
-        {}; // Conjunto para garantir nomes de cursos únicos
-
-    cursosSnapshot.docs.forEach((doc) {
-      final nomeCurso = doc['nome'] as String;
-      if (!nomesCursos.contains(nomeCurso)) {
-        cursosExistentes.add(nomeCurso);
-        nomesCursos.add(nomeCurso);
-      }
-    });
-
-    setState(() {
-      cursos = cursosExistentes;
-      cursos.sort(); // Ordenar os cursos em ordem alfabética
-      cursos.insert(0,
-          "Adicionar nova turma"); // Adicionar a opção "Adicionar nova turma" no início da lista
-    });
+    try {
+      final nomes = await FuncoesUnichat.listarNomesTurmas();
+      setState(() {
+        cursos = nomes;
+        cursos.sort();
+        cursos.insert(0, "Adicionar nova turma");
+      });
+    } catch (_) {
+      setState(() {
+        cursos = ["Adicionar nova turma"];
+      });
+    }
   }
 
   void configuraNotificacoes(salasCarregadas, usuarioAutenticado) async {
@@ -160,35 +153,20 @@ class _ClassPageState extends State<ClassPage> {
   }
 
   void _salvarChat(BuildContext context) async {
-    final curso = _selectedCurso?.trim().toUpperCase();
     final codigo = codigoController.text.trim().toUpperCase();
-
-    final cursoSnapshot = await FirebaseFirestore.instance
-        .collection('salas-participantes')
-        .where('nome', isEqualTo: curso)
-        .where('codigo', isEqualTo: codigo)
-        .get();
-
-    if (cursoSnapshot.docs.isNotEmpty) {
-      final chatId = cursoSnapshot.docs.first.id;
-
-      await FirebaseFirestore.instance
-          .collection('salas-participantes')
-          .doc(chatId)
-          .update({
-        'email': FieldValue.arrayUnion([_firebaseAuth.currentUser!.email])
-      });
-
+    try {
+      await FuncoesUnichat.entrarTurma(codigo);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Chat adicionado com sucesso!'),
         ),
       );
-
       nomeController.clear();
       codigoController.clear();
       Navigator.of(context).pop();
-    } else {
+    } catch (_) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Turma e/ou código da turma incorretos.'),
