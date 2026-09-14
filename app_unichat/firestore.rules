@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null && request.auth.token.email is string;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function isStaff() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && (
+          userDoc().isProfessor == true
+          || userDoc().isCoordenador == true
+          || userDoc().isAdmin == true
+        );
+    }
+
+    function isMember(salaId) {
+      return signedIn()
+        && request.auth.token.email in
+          get(/databases/$(database)/documents/salas-participantes/$(salaId)).data.email;
+    }
+
+    function alunoSemCargo() {
+      return request.resource.data.get('isProfessor', false) == false
+        && request.resource.data.get('isCoordenador', false) == false
+        && request.resource.data.get('isAdmin', false) == false;
+    }
+
+    match /usuarios/{userId} {
+      allow get: if isOwner(userId) || isStaff();
+      allow list: if isStaff();
+      allow create: if isOwner(userId)
+        && request.resource.data.email == request.auth.token.email
+        && alunoSemCargo();
+      allow update: if isOwner(userId)
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.get('isProfessor', false) == resource.data.get('isProfessor', false)
+        && request.resource.data.get('isCoordenador', false) == resource.data.get('isCoordenador', false)
+        && request.resource.data.get('isAdmin', false) == resource.data.get('isAdmin', false);
+      allow delete: if false;
+    }
+
+    match /salas-participantes/{salaId} {
+      allow read: if isStaff() || isMember(salaId);
+      allow create: if isStaff()
+        && request.auth.token.email in request.resource.data.email;
+      allow update, delete: if isStaff();
+
+      match /mensagens/{mensagemId} {
+        allow read: if isStaff() || isMember(salaId);
+        allow create: if isMember(salaId)
+          && isStaff()
+          && request.resource.data.usuario == request.auth.token.email
+          && request.resource.data.texto is string
+          && request.resource.data.texto.size() > 0
+          && request.resource.data.texto.size() < 4000;
+        allow update: if isMember(salaId)
+          && resource.data.usuario == request.auth.token.email
+          && request.resource.data.usuario == resource.data.usuario
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['texto', 'editada']);
+        allow delete: if isMember(salaId)
+          && resource.data.usuario == request.auth.token.email;
+      }
+    }
+  }
+}
